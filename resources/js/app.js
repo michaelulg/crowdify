@@ -8,6 +8,26 @@ function defaultGrid() {
     const container = document.getElementById("container");
     makeRows(10);
     makeColumns(10);
+    container.addEventListener("mouseover", function( event ) {
+        // highlight the mouseover target
+        event.target.style.backgroundColor = "black";
+        let square1 = document.createElement("a");
+        square1.innerHTML += "Game"
+        event.target.appendChild(square1).className = "square";
+        
+        let square2 = document.createElement("a");
+        square2.innerHTML += "Query"
+        event.target.appendChild(square2).className = "square";
+      
+        // reset the color after a short delay
+        //setTimeout(function() {
+        //  event.target.style.backgroundColor = "#" + Math.floor(Math.random()*16777215).toString(16);;
+        //}, 500);
+      }, false);
+    container.addEventListener("mouseout", function( event ) {
+        event.target.style.backgroundColor = "#" + Math.floor(Math.random()*16777215).toString(16);
+        event.target.textContent = '';
+    }, false);
 }
 
 //Takes (rows, columns) input and makes a grid
@@ -34,9 +54,16 @@ function makeColumns(cellNum) {
             newCell.style.backgroundColor = "#" + randomColor;
             rows[j].appendChild(newCell).className = "cell";
         };
-
     };
 };
+
+function mouseOver() {
+    document.getElementById("container").style.backgroundColor = "black";
+}
+  
+function mouseOut() {
+    document.getElementById("container").style.backgroundColor = "red";
+}
 
   
 
