@@ -1,4 +1,4 @@
 # crowdify
 Final project for TAU's data driven crowdsourcing workshop
 
-![image](https://user-images.githubusercontent.com/63152532/115124427-dde64d00-9fca-11eb-9bca-12a130e721f2.png)
+![image](https://user-images.githubusercontent.com/63152532/115126873-f78f9080-9fda-11eb-8036-d817b7ca06d3.png)
