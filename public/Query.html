@@ -25,42 +25,86 @@
       <div id="loggedin">
         <div id="user-profile">
         </div>
+        <center>
+        <button class="btn btn-default" id="pick-new-song">Pick another song</button>
+        <botton class="btn btn-default" id = "submit-data">Submit</botton>
+        <form>
+          <label for = "song-data">Enter data:</label>
+          <input type="" value = "" id="song-data"><br>
+        </form>
+      </center>
+      <center>
         <div id="oauth">
         </div>
-        <button class="btn btn-default" id="obtain-new-token">Obtain new token using the refresh token</button>
+        <div id = "options">
+        </div>
+      </center>
+        <center>
+        <div id="super-users">
+        </center>
+        </div>
       </div>
     </div>
 
     <script id="user-profile-template" type="text/x-handlebars-template">
-      <h1>Logged in as {{display_name}}</h1>
+      <h1>Welcome to the Query page! here you can help crowdify grow!</h1>
       <div class="media">
         <div class="pull-left">
-          <img class="media-object" width="150" src="{{images.0.url}}" />
+          <img class="media-object" width="150" src="{{image_url}}" />
         </div>
         <div class="media-body">
           <dl class="dl-horizontal">
-            <dt>Display name</dt><dd class="clearfix">{{display_name}}</dd>
-            <dt>Id</dt><dd>{{id}}</dd>
-            <dt>Email</dt><dd>{{email}}</dd>
-            <dt>Spotify URI</dt><dd><a href="{{external_urls.spotify}}">{{external_urls.spotify}}</a></dd>
-            <dt>Link</dt><dd><a href="{{href}}">{{href}}</a></dd>
-            <dt>Profile Image</dt><dd class="clearfix"><a href="{{images.0.url}}">{{images.0.url}}</a></dd>
-            <dt>Country</dt><dd>{{country}}</dd>
+            <dt>Please type a line from: </dt><dd id = "song">{{songname}}</dd>
           </dl>
         </div>
       </div>
     </script>
 
     <script id="oauth-template" type="text/x-handlebars-template">
-      <h2>oAuth info</h2>
-      <dl class="dl-horizontal">
+      <!--<h2>oAuth info</h2>-->
+      <!--<dl class="dl-horizontal">
         <dt>Access token</dt><dd class="text-overflow">{{access_token}}</dd>
-        <dt>Refresh token</dt><dd class="text-overflow">{{refresh_token}}</dd>
+        <dt>Refresh token</dt><dd class="text-overflow">{{refresh_token}}</dd>-->
       </dl>
+    </script>
+
+    <script id = "suggested-words-template" type = "text/x-handlebars-template">
+      <h2> You can also pick from this list: </h2>
+      <button class="btn btn-default" id="option_1">{{option_1}}</button>
+      <br>
+      <button class="btn btn-default" id="option_2">{{option_2}}</button>
+      <br>
+      <button class="btn btn-default" id="option_3">{{option_3}}</button>
+      <br>
+      <button class="btn btn-default" id="option_4">{{option_4}}</button>
+      <br>
+      <button class="btn btn-default" id="option_5">{{option_5}}</button>
+      <br>
+    </script>
+
+    <script id = "super-users-template" type = "text/x-handlebars-template">
+      <h2> These are the Top Contributers to Crowdify: </h2>
+      <center>
+      <table style="width:100%">
+        <tr>
+          <th>User</th>
+        </tr>
+        <tr>
+          <th id = "user_1">{{user_1}}</th>
+        </tr>
+        <tr>
+          <th id = "user_2">{{user_2}}</th>
+        </tr>
+        <tr>
+          <th id = "user_3">{{user_3}}</th>
+        </tr>
+        </table>
+      </center>
     </script>
 
     <script src="//cdnjs.cloudflare.com/ajax/libs/handlebars.js/2.0.0-alpha.1/handlebars.min.js"></script>
     <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
+    <script src = "PersonalGame.js"></script>
     <script>
       (function() {
 
@@ -68,6 +112,7 @@
          * Obtains parameters from the hash of the URL
          * @return Object
          */
+        var num = 1;
         function getHashParams() {
           var hashParams = {};
           var e, r = /([^&;=]+)=?([^&;]*)/g,
@@ -77,7 +122,8 @@
           }
           return hashParams;
         }
-
+        var user_id;
+        var song_id;
         var userProfileSource = document.getElementById('user-profile-template').innerHTML,
             userProfileTemplate = Handlebars.compile(userProfileSource),
             userProfilePlaceholder = document.getElementById('user-profile');
@@ -86,11 +132,21 @@
             oauthTemplate = Handlebars.compile(oauthSource),
             oauthPlaceholder = document.getElementById('oauth');
 
+        var optionsSource = document.getElementById('suggested-words-template').innerHTML,
+            optionsTemplate = Handlebars.compile(optionsSource),
+            optionsPlaceholder = document.getElementById('options');
+
+        var superusersSource = document.getElementById('super-users-template').innerHTML,
+            superusersTemplate = Handlebars.compile(superusersSource),
+            superusersPlaceholder = document.getElementById('super-users');
+
+    
         var params = getHashParams();
 
         var access_token = params.access_token,
             refresh_token = params.refresh_token,
-            error = params.error;
+            error = params.error,
+            person = "JhonLinTheGreat?";
 
         if (error) {
           alert('There was an error during the authentication');
@@ -101,15 +157,56 @@
               access_token: access_token,
               refresh_token: refresh_token
             });
-
-            $.ajax({
+            var pos = Math.floor((Math.random()*10 + 1));
+            $.ajax({ /*init user_id and user_name*/
                 url: 'https://api.spotify.com/v1/me',
                 headers: {
                   'Authorization': 'Bearer ' + access_token
                 },
                 success: function(response) {
-                  userProfilePlaceholder.innerHTML = userProfileTemplate(response);
+                  user_id = response.id;
+                  user_name = response.name;
+                  $('#login').hide();
+                  $('#loggedin').show();
+                }
+            });
+            $.ajax({
+                url: '\song_render',
+                data: {
+                  'pos': pos,
+                  access_token: access_token
+                },
+                success: function(response) {
 
+                  /*var myrand = Math.floor((Math.random()*10 + 1));*/
+                  /*var url = get_image_url("");
+                  var name = {image_url:'https://i.scdn.co/image/ab67616d00001e02a6a335d613d151c626895a83',track:{name:response.items[myrand].track.name},}; */
+                  /*var image_url = get_image_url(items.id);*/
+                  userProfilePlaceholder.innerHTML = userProfileTemplate(response);
+                  song_id = response.song_id;
+                  var words = get_offers(song_id);
+                  var options = {option_1:"TRYING", option_2: "TRYING", option_3: "TRYING", option_4:"TRYING", 
+                    option_5: "TRYING"};
+                  var users = {user_1: "Trying", user_2: "Trying", user_3: "Trying"};
+                  
+                  optionsPlaceholder.innerHTML = optionsTemplate(options); /*render options*/
+                  superusersPlaceholder.innerHTML = superusersTemplate(users);
+                
+                  if(word.length >= 5)
+                  {
+                  options = {option_1: words[0], option_2: words[1], option_3: words[2], option_4: words[3], 
+                    option_5: words[4]}
+                  optionsPlaceholder.innerHTML = optionsTemplate(temp); /*render options*/
+                  }
+                  
+                  else
+                  {
+                    document.getElementById("options").style.display = "none";
+                    /*hide options*/
+                  }
+                  
+                  var users_arr = get_super_users(); /*need to render top 3 on the screen- Grabois
+                  problem is that we keep id's and not name*/
                   $('#login').hide();
                   $('#loggedin').show();
                 }
@@ -120,20 +217,36 @@
               $('#loggedin').hide();
           }
 
-          document.getElementById('obtain-new-token').addEventListener('click', function() {
+          document.getElementById('pick-new-song').addEventListener('click', function() {
+            pos = Math.floor((Math.random()*10 + 1));
             $.ajax({
-              url: '/refresh_token',
-              data: {
-                'refresh_token': refresh_token
-              }
-            }).done(function(data) {
-              access_token = data.access_token;
-              oauthPlaceholder.innerHTML = oauthTemplate({
-                access_token: access_token,
-                refresh_token: refresh_token
-              });
+                url: '\song_render',
+                data: {
+                  'pos': pos,
+                   access_token: access_token
+                },
+                success: function(response) {
+
+                  /*var myrand = Math.floor((Math.random()*10 + 1));*/
+                  /*var url = get_image_url("");
+                  var name = {image_url:'https://i.scdn.co/image/ab67616d00001e02a6a335d613d151c626895a83',track:{name:response.items[myrand].track.name},}; */
+                  /*var image_url = get_image_url(items.id);*/
+                  userProfilePlaceholder.innerHTML = userProfileTemplate(response);
+
+                  $('#login').hide();
+                  $('#loggedin').show();
+                }
             });
           }, false);
+
+          document.getElementById('submit-data').addEventListener('click', function(req,res) {
+            word = document.getElementById("song-data").value;
+            add_word(user_name,song_id,word); /*modify database*/
+            var words = get_offers(song_id); /*we need to render the suggestions and add a click for each one
+            for that purpos, we need, say, 5 dl's for five suggestions, and each one contains an event
+            listner from which we will call the choose_word function.*/
+          }, false)
+          
         }
       })();
     </script>
