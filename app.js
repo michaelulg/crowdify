@@ -45,7 +45,7 @@ function makeColumns(cellNum) {
     for (i = 0; i < rows.length; i++) {
         for (j = 0; j < cellNum; j++) {
             let newCell = document.createElement("a");
-            newCell.setAttribute("href", "https://www.delish.com/entertaining/g642/american-hot-dog-styles/?slide=1")
+            newCell.setAttribute("href", "\queryjs")
             newCell.style.cursor = "default"
             const randomColor = Math.floor(Math.random()*16777215).toString(16);
             while (randomColor == 000000) {
