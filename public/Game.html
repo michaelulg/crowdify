@@ -90,10 +90,22 @@
         game_id = data.game_id;
         document.getElementById("userid").innerHTML = data.game_id;
         player.innerHTML = data.user_1.items[i].track.name;
-        option1.innerHTML = "data.user_1"; /*should be word from the data base*/
-        option2.innerHTML = "data.user_2"; /*should be word from the data base*/
-        option1.value = 1; /*should be rank of the word from DB*/
-        option2.value = 1; /*should be rank of the word from DB*/
+        let words;
+        $.ajax({
+                    url: '\get\offers',
+                    data: {
+                      songID: data.user_1.items[i].id,
+                      name: data.user_1.items[i].id,
+                      views: data.user_1.items[i].popularity
+                    },
+                    success: function(response) {
+                      words = response.words;
+                    }
+        })
+        option1.innerHTML = words[0]; 
+        option2.innerHTML = words[1]; 
+        option1.value = 1; 
+        option2.value = 1; 
         
         option2.addEventListener('click', function()
         {
@@ -146,14 +158,42 @@
       if(i % 2 == 0)
       {
         document.getElementById("name").innerHTML = user_1_tracks.items[i].track.name;
-        option1.innerHTML = "data.user_1"; /*should be word from the data base*/
-        option2.innerHTML = "data.user_2"; /*should be word from the data base*/
+        let words;
+        $.ajax({
+                    url: '\get\offers',
+                    data: {
+                      songID: data.user_1.items[i].id,
+                      name: data.user_1.items[i].id,
+                      views: data.user_1.items[i].popularity
+                    },
+                    success: function(response) {
+                      words = response.words;
+                    }
+        })
+        option1.innerHTML = words[0]; 
+        option2.innerHTML = words[1]; 
+        option1.value = 1;
+        option2.value = 1;
       }
       if(i % 2 == 1)
       {
         document.getElementById("name").innerHTML = user_2_tracks.items[i].track.name;
-        option1.innerHTML = "data.user_3"; /*should be word from the data base*/
-        option2.innerHTML = "data.user_4"; /*should be word from the data base*/
+        let words;
+        $.ajax({
+                    url: '\get\offers',
+                    data: {
+                      songID: data.user_2.items[i].id,
+                      name: data.user_2.items[i].id,
+                      views: data.user_2.items[i].popularity
+                    },
+                    success: function(response) {
+                      words = response.words;
+                    }
+        })
+        option1.innerHTML = words[0]; 
+        option2.innerHTML = words[1]; 
+        option1.value = 1;
+        option2.value = 1;
       }
       if(i == 2)
       {
