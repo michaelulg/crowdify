@@ -157,6 +157,16 @@
       color: rgb(220, 230, 203);
       font-weight: bold;
   }
+
+  #login, #loggedin {
+    display: none;
+  }
+  .text-overflow {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    width: 500px;
+  }
   
   .searchbtn .fas{
       position: relative;

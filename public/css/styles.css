@@ -49,7 +49,7 @@ html {
 
 body, p {
 	color: #777777; 
-	font: 400 1rem/1.625rem "Open Sans", sans-serif;
+	font: 1.2rem "Open Sans", sans-serif;
 }
 
 h1 {
@@ -60,26 +60,39 @@ h1 {
 h2 {
 	color: #333333;
 	font: 600 2rem/2.75rem "Poppins", sans-serif;
+	line-height: 1.5em;
 }
 
 h3 {
 	color: #333333;
 	font: 600 1.75rem/2.375rem "Poppins", sans-serif;
+	line-height: 1.5em;
 }
+
 
 h4 {
 	color: #333333;
 	font: 600 1.5rem/2.125rem "Poppins", sans-serif;
+	line-height: 1.5em;
 }
 
 h5 {
 	color: #333333;
 	font: 600 1.25rem/1.75rem "Poppins", sans-serif;
+	line-height: 1.5em;
 }
 
 h6 {
 	color: #333333;
 	font: 600 1rem/1.5rem "Poppins", sans-serif;
+}
+
+h7 {
+	color: #777777;
+	font: 3rem "Open Sans", sans-serif;
+	font-style: italic;
+	margin-bottom: 2rem;
+	margin-top: 2.5rem;
 }
 
 .p-large {
@@ -130,13 +143,46 @@ a:hover {
 	background-color: #1fc4ca;
 	color: #ffffff;
 	font-weight: 600;
+	font-size: 1rem;
+	line-height: 0;
+	text-decoration: none;
+	transition: all 0.2s;
+}
+
+.btn-solid-reg-block {
+	display: flex;
+	padding: 1.375rem 2.25rem 1.375rem 2.25rem;
+	border: 1px solid #1fc4ca;
+	border-radius: 2rem;
+	background-color: #1fc4ca;
+	color: #ffffff;
+	font-weight: 600;
 	font-size: 0.875rem;
 	line-height: 0;
 	text-decoration: none;
 	transition: all 0.2s;
 }
 
+
+#login, #loggedin {
+    display: none;
+}
+
+.text-overflow {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    width: 500px;
+}
+
 .btn-solid-reg:hover {
+	border: 1px solid #1fc4ca;
+	background-color: transparent;
+	color: #1fc4ca;
+	text-decoration: none;
+}
+
+.btn-solid-reg-block:hover {
 	border: 1px solid #1fc4ca;
 	background-color: transparent;
 	color: #1fc4ca;
@@ -595,6 +641,7 @@ input[type='checkbox'] {
 	background: linear-gradient(to bottom right, #1DB954, black);
 }
 
+
 .header .text-container {
 	margin-bottom: 2.5rem;
 	text-align: center;
@@ -875,12 +922,23 @@ input[type='checkbox'] {
 /*     Features     */
 /********************/
 .tabs {
-	padding-top: 7.5rem;
-	padding-bottom: 8.125rem;
+	padding-top: 7rem;
+	padding-bottom: 3.5rem;
 	background-color: #d4ce91;
 }
 
+.tabs th {
+	font-size: 3rem;
+}
+
 .tabs h2 {
+	font-size: 4.5rem;
+	text-align: center;
+	margin-bottom: 3.5rem;
+}
+
+.tabs h6 {
+	font-size: 3rem;
 	text-align: center;
 	margin-bottom: 3.125rem;
 }
@@ -922,10 +980,15 @@ input[type='checkbox'] {
 
 .tabs .image-container {
 	margin-bottom: 3rem;
+	margin-top: 1rem;
 }
 
 .tabs h3 {
-	margin-bottom: 1.125rem;
+	margin-bottom: 1rem;
+}
+
+.tabs h8 {
+	margin-bottom: 1rem;
 }
 
 .tabs p,
@@ -935,6 +998,11 @@ input[type='checkbox'] {
 
 .tabs .list-unstyled {
 	margin-bottom: 1.75rem;
+	margin-left: auto; 
+	margin-right: auto;
+	text-align: center;
+	font-size: 4rem;
+	line-height: 1.5em;
 }
 
 .tabs .list-unstyled .fas {
@@ -944,16 +1012,55 @@ input[type='checkbox'] {
 
 .tabs .list-unstyled .media-body {
 	margin-left: 0.5rem;
+	font-size: 3rem;
 }
 
 .tabs .btn-solid-reg {
 	border: 1px solid #333333;
 	background-color: #333333;
+	margin-top: 2rem;
+	margin-right: 1rem;
+	line-height: 1em;
+}
+
+.tabs .btn-solid-reg-block {
+	border: 1px solid #333333;
+	background-color: #333333;
+	margin-top: 2rem;
+	margin-right: 1rem;
 }
 
 .tabs .btn-solid-reg:hover {
 	background-color: transparent;
 	color: #333333;
+}
+
+.tabs .btn-solid-reg-block:hover {
+	background-color: transparent;
+	color: #333333;
+}
+
+.tabs h4 {
+	font-size: 50px;
+	text-align: center;
+}
+
+.tabs h5 {
+	font-size: 30px;
+	text-align: center;
+}
+
+.tabs h6 {
+	font-size: 30px;
+	text-align: center;
+	margin-top: 2rem;
+	line-height: 1.5em;
+}
+
+.tabs form {
+	margin-top: 1.5rem;
+	text-align: center;
+	align-self: center;
 }
 
 
@@ -2072,8 +2179,16 @@ a:hover.back-to-top {
 	}
 
 	.tabs .text-container {
-		margin-top: 0.5rem;
+		margin-top: 2rem;
 		margin-left: 2rem;
+		margin-bottom: 2.5rem;
+		text-align: center;
+	}
+
+	.tabs .text-container-btn {
+		align-self: center;
+		margin-bottom: 2rem;
+		text-align: center;
 	}
 	/* end of features */
 	
