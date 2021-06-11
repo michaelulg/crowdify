@@ -76,10 +76,6 @@
       <br>
       <button class="btn btn-default" id="option_3">{{option_3}}</button>
       <br>
-      <button class="btn btn-default" id="option_4">{{option_4}}</button>
-      <br>
-      <button class="btn btn-default" id="option_5">{{option_5}}</button>
-      <br>
     </script>
 
     <script id = "super-users-template" type = "text/x-handlebars-template">
@@ -122,8 +118,12 @@
           }
           return hashParams;
         }
-        var user_id;
-        var song_id;
+        var userID;
+        var songID;
+        var popolarity;
+        var username;
+        var name; /*song's name*/
+
         var userProfileSource = document.getElementById('user-profile-template').innerHTML,
             userProfileTemplate = Handlebars.compile(userProfileSource),
             userProfilePlaceholder = document.getElementById('user-profile');
@@ -142,12 +142,10 @@
 
     
         var params = getHashParams();
-
         var access_token = params.access_token,
             refresh_token = params.refresh_token,
             error = params.error,
             person = "JhonLinTheGreat?";
-
         if (error) {
           alert('There was an error during the authentication');
         } else {
@@ -164,8 +162,8 @@
                   'Authorization': 'Bearer ' + access_token
                 },
                 success: function(response) {
-                  user_id = response.id;
-                  user_name = response.name;
+                  userID = response.id;
+                  username = response.name;
                   $('#login').hide();
                   $('#loggedin').show();
                 }
@@ -183,20 +181,34 @@
                   var name = {image_url:'https://i.scdn.co/image/ab67616d00001e02a6a335d613d151c626895a83',track:{name:response.items[myrand].track.name},}; */
                   /*var image_url = get_image_url(items.id);*/
                   userProfilePlaceholder.innerHTML = userProfileTemplate(response);
-                  song_id = response.song_id;
-                  var words = get_offers(song_id);
-                  var options = {option_1:"TRYING", option_2: "TRYING", option_3: "TRYING", option_4:"TRYING", 
-                    option_5: "TRYING"};
+                  songID = response.songID;
+                  popolarity = response.popolarity;
+                  name = response.songname;
+                  let words;
+                  //var words = get_offers(songID);
+
+                  $.ajax({
+                    url: '\get\offers',
+                    data: {
+                      songID: songID,
+                      name: name,
+                      views: popolarity
+                    },
+                    success: function(response) {
+                      words = response.words;
+                    }
+                  })
+
+                  var options = {option_1:"TRYING", option_2: "TRYING", option_3: "TRYING"};
                   var users = {user_1: "Trying", user_2: "Trying", user_3: "Trying"};
                   
                   optionsPlaceholder.innerHTML = optionsTemplate(options); /*render options*/
                   superusersPlaceholder.innerHTML = superusersTemplate(users);
                 
-                  if(word.length >= 5)
+                  if(word.length >=3)
                   {
-                  options = {option_1: words[0], option_2: words[1], option_3: words[2], option_4: words[3], 
-                    option_5: words[4]}
-                  optionsPlaceholder.innerHTML = optionsTemplate(temp); /*render options*/
+                  options = {option_1: words[0], option_2: words[1], option_3: words[2]}
+                  optionsPlaceholder.innerHTML = optionsTemplate(options); /*render options*/
                   }
                   
                   else
@@ -226,7 +238,9 @@
                    access_token: access_token
                 },
                 success: function(response) {
-
+                  songID = response.songID;
+                  popolarity = response.popolarity;
+                  name = response.songname;
                   /*var myrand = Math.floor((Math.random()*10 + 1));*/
                   /*var url = get_image_url("");
                   var name = {image_url:'https://i.scdn.co/image/ab67616d00001e02a6a335d613d151c626895a83',track:{name:response.items[myrand].track.name},}; */
@@ -240,12 +254,55 @@
           }, false);
 
           document.getElementById('submit-data').addEventListener('click', function(req,res) {
-            word = document.getElementById("song-data").value;
-            add_word(user_name,song_id,word); /*modify database*/
-            var words = get_offers(song_id); /*we need to render the suggestions and add a click for each one
-            for that purpos, we need, say, 5 dl's for five suggestions, and each one contains an event
-            listner from which we will call the choose_word function.*/
+            let word = document.getElementById("song-data").value;
+            $.ajax({
+              url: '\add\word',
+              data: {
+                userID: userID,
+                songID: songID,
+                username: username,
+                name: name,
+                views: popolarity,
+                word: word
+              }
+            }) 
           }, false)
+
+          document.getElementById('option_1').addEventListener('click',function(req,res){
+            let word = document.getElementById("option_1").innerHTML;
+            $.ajax({
+              url: '\choose\word',
+              data: {
+                userID: userID,
+                songID: songID,
+                word: word
+              }
+            })
+          })
+
+          document.getElementById('option_2').addEventListener('click',function(req,res){
+            let word = document.getElementById("option_2").innerHTML;
+            $.ajax({
+              url: '\choose\word',
+              data: {
+                userID: userID,
+                songID: songID,
+                word: word
+              }
+            })
+          })
+
+          document.getElementById('option_3').addEventListener('click',function(req,res){
+            let word = document.getElementById("option_3").innerHTML;
+            $.ajax({
+              url: '\choose\word',
+              data: {
+                userID: userID,
+                songID: songID,
+                word: word
+              }
+            })
+          })
           
         }
       })();

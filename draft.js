@@ -15,6 +15,8 @@
  var cookieParser = require('cookie-parser'); //more cookies?
  var fs = require('fs'); 
  var path = require('path');
+ var url = require('url');
+ var funcs = require('./public/js/personalgame');
 
  const { response } = require('express');
  
@@ -39,8 +41,6 @@
  var participents = [];
  var games_arr = []; /*contains for each games: who answered for current round*/
  var games_num = 0;
- var user_id; /*major problem with that. we cannot deal with multiple users*/
- var recent_tracks; /*major problem with that. we cannot deal with multiple users*/
  var generateRandomString = function(length) {
    var text = '';
    var possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
@@ -70,7 +70,10 @@
 
     var app2 = express();
     app2.get('/', (req, res) => {
-      res.sendFile(__dirname + '/public/Game.html');
+      curr_access_token = url.parse(req.url,true).query.access_token;
+      curr_access_token = url.parse(req.url,true).query.refresh_token;
+      
+      res.redirect("/Game_page#access_token="+access_token);
     });
     const http = require('http');
     const server = http.createServer(app2);
@@ -80,6 +83,11 @@
     server.listen(3000, () => {
       console.log('listening on *:3000');
     });
+
+    app2.use('/Game_page', express.static(__dirname+'/public/Game.html'))
+    .use(cors())
+    .use(cookieParser());
+
  app.get('/login', function(req, res) { //the html adresses the "/login" thingi and it goes here! cool 
  
    var state = generateRandomString(16); //what is that?
@@ -134,30 +142,6 @@
              access_token_global = access_token;
              refresh_token_global = refresh_token;
  
-         var options = {
-           url: 'https://api.spotify.com/v1/me',
-           headers: { 'Authorization': 'Bearer ' + access_token },
-           json: true
-         };
- 
-         // use the access token to access the Spotify Web API
-         request.get(options, function(error, response, body) {
-          user_id = body.id;
-          /*console.log(body);*/
-         });
-
-         options = 
-         {
-          url: 'https://api.spotify.com/v1/me/player/recently-played',
-          headers: { 'Authorization': 'Bearer ' + access_token },
-          json: true
-         };
-
-         request.get(options, function(error, response, body) {
-          recent_tracks = body;
-          /*console.log(body);*/
-         });
- 
          // we can also pass the token to the browser to make requests from there
          res.redirect('/boxes#' +
            querystring.stringify({
@@ -182,6 +166,7 @@ app.get('/song_render',function(req,res) /*gets a random position in the recentl
   let curr_access_token = req.query.access_token;
   var songID =" ";
   var songname;
+  var popolarity;
   var image_url;
   var options = {
     url: 'https://api.spotify.com/v1/me/player/recently-played',
@@ -194,21 +179,49 @@ app.get('/song_render',function(req,res) /*gets a random position in the recentl
     songID = body.items[pos].track.id;
     /*console.log(songID);*/
     songname = body.items[pos].track.name;
+    popolarity = body.items[pos].track.popolarity;
     options = {
       url: 'https://api.spotify.com/v1/tracks/'+songID,
-      headers: { 'Authorization': 'Bearer ' + access_token_global },
+      headers: { 'Authorization': 'Bearer ' + curr_access_token },
       json: true
     };
     request.get(options, function(error, response, body) {
       console.log('https://api.spotify.com/v1/tracks/'+songID);
       image_url = body.album.images[1].url;
-      res.send({image_url:image_url, songname: songname, songID: songID})
+      res.send({image_url:image_url, songname: songname, songID: songID, popolarity: popolarity})
     });
   });
 
 })    
 
 app.get('/Game', (req, res) => {
+    var curr_access_token = req.access_token;
+    var curr_refresh_token = req.refresh_token;
+    var user_id;
+    var recent_tracks;
+
+    var options = {
+      url: 'https://api.spotify.com/v1/me',
+      headers: { 'Authorization': 'Bearer ' + curr_access_token },
+      json: true
+    };
+
+    // use the access token to access the Spotify Web API
+    request.get(options, function(error, response, body) {
+     user_id = body.id;
+    });
+
+    options = 
+         {
+          url: 'https://api.spotify.com/v1/me/player/recently-played',
+          headers: { 'Authorization': 'Bearer ' + access_token },
+          json: true
+         };
+
+    request.get(options, function(error, response, body) {
+      recent_tracks = body;
+    });
+
     io.on('connection', (socket) => {
       if(flag != socket.id)
       {
@@ -283,19 +296,32 @@ app.get('/Game', (req, res) => {
     //     io.to(game_id).emit("NextRound");
     //   }
     // })
-  res.redirect("http://localhost:3000");
+  res.redirect("http://localhost:3000?access_token="+curr_access_token+"&refresh_token="+curr_refresh_token);
 });
 
+// function getHashParams() {
+//   var hashParams = {};
+//   var e, r = /([^&;=]+)=?([^&;]*)/g,
+//       q = window.location.hash.substring(1);
+//   while ( e = r.exec(q)) {
+//      hashParams[e[1]] = decodeURIComponent(e[2]);
+//   }
+//   return hashParams;
+// }
 
-app.get('/queryjs', function(req,res)
-{
-  res.redirect('/Query#' +
-           querystring.stringify({
-             access_token: access_token_global,
-             refresh_token: refresh_token_global
-           }));
-  console.log("HI from Query!");
-})
+// app.get('/queryjs', function(req,res)
+// {
+//   // var params = getHashParams();
+//   // let curr_access_token = params.access_token;
+//   // let curr_refresh_token = params.access_token;
+
+//   res.redirect('/Query#' +
+//            querystring.stringify({
+//              access_token: access_token_global, /*problem!*/
+//              refresh_token: refresh_token_global
+//            }));
+//   console.log("HI from Query!");
+// })
  
  app.get('/refresh_token', function(req, res) {
  
@@ -320,6 +346,53 @@ app.get('/queryjs', function(req,res)
      }
    });
  });
+
+ app.get("/get/offers", function(req,res)
+ {
+   let songID = req.query.songID;
+   let name = req.query.name;
+   let views = req.query.views;
+   funcs.get_offers(songID,name,views).then(function(result)
+   {
+     res.send(
+       {
+         words: result
+       }
+     )
+   })
+ })
+
+ app.get("/get/superusers", function(req,res)
+ {
+   funcs.get_super_users().then(function(result)
+   {
+     res.send(
+       {
+         super_users: result
+       }
+     )
+   })
+ })
+
+ app.get("/add/word",function(req,res)
+ {
+   let userID = req.query.userID;
+   let songID = req.query.songID;
+   let username = req.query.username;
+   let name = req.query.name;
+   let views = req.query.views;
+   let word = req.query.word;
+   funcs.add_word(userID, username, songID, name, views, word);
+ })
+
+ app.get("/choose/word",function(req,res)
+ {
+   let userID = req.query.userID;
+   let songID = req.query.songID;
+   let word = req.query.word;
+   funcs.add_word(userID,songID,word);
+ })
+
  exports.ret_io = function (){return io};
  console.log('Listening on 8888');
  app.listen(8888);
