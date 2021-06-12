@@ -94,10 +94,21 @@ function mouseOver() {
 function mouseOut() {
     document.getElementById("container").style.backgroundColor = "red";
 }
-  
+
+function getHashParams() {
+    var hashParams = {};
+    var e, r = /([^&;=]+)=?([^&;]*)/g,
+        q = window.location.hash.substring(1);
+    while ( e = r.exec(q)) {
+       hashParams[e[1]] = decodeURIComponent(e[2]);
+    }
+    return hashParams;
+}
 function showsearch() {
     var search = document.getElementById("search_term").value;
-    window.location.href = "search?" + search;
+    var params = getHashParams();
+    access_token = params.access_token;
+    window.location.href = "search?" + search + "&access_token="+access_token;
     alert(search);
 }
 

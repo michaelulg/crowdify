@@ -35,6 +35,11 @@
   * @return {string} The generated string
   */
  
+ 
+ var user_id;
+ var popular_songs;
+ var global_access_token;
+ var flag = ""; /*for some reason, with out this flag which functions as a lock, the connection scrtipt happens reapetedly*/
  var access_token_global;  /*major problem with that. we cannot deal with multiple users*/
  var refresh_token_global; /*major problem with that. we cannot deal with multiple users*/
  var flag = ""; /*for some reason, without this flag which functions as a lock, the connection scrtipt happens reapetedly*/
@@ -116,7 +121,7 @@
    var code = req.query.code || null;
    var state = req.query.state || null;
    var storedState = req.cookies ? req.cookies[stateKey] : null;
- 
+   
    if (state === null || state !== storedState) {
      res.redirect('/#' +
        querystring.stringify({
@@ -141,6 +146,7 @@
        if (!error && response.statusCode === 200) {
         
              access_token = body.access_token,
+             global_access_token = body.access_token,
              refresh_token = body.refresh_token;
              access_token_global = access_token;
              refresh_token_global = refresh_token;
@@ -158,6 +164,10 @@
            }));
        }
      });
+     funcs.popular_songs().then(function(result)
+     {
+      popular_songs = result;
+     })
    }
  });
   
@@ -263,6 +273,12 @@ app.get('/Game', (req, res) => {
           }
         })
         flag = socket.id;
+        // console.log(socket.id);
+        // if(recent_tracks != undefined)
+        // {console.log(recent_tracks.items[0].track.name);}
+        // console.log("Connected");
+        participents.push({user_id: user_id});
+        // console.log(participents.length);
         console.log(socket.id);
         console.log("Connected");
         participents.push({user_id: user_id, recent_tracks: recent_tracks});
@@ -381,6 +397,7 @@ app.get('/Game', (req, res) => {
 
  app.get("/get_track_name",function(req,res)
  {
+  var curr_access_token = url.parse(req.url,true).query.access_token;
   var songID = req.query.songID;
   var songname;
   var popularity;
@@ -389,7 +406,7 @@ app.get('/Game', (req, res) => {
   var song_url;
   var options = {
     url: 'https://api.spotify.com/v1/tracks/'+songID,
-    headers: { 'Authorization': 'Bearer ' + global_access_token },
+    headers: { 'Authorization': 'Bearer ' + curr_access_token },
     json: true
   };
   request.get(options, function(error, response, body) {
@@ -433,6 +450,21 @@ app.get('/Game', (req, res) => {
    let word = req.query.word;
    funcs.add_word(userID,songID,word);
  })
+
+ app.get("/get_weight", function(req,res)
+{
+  let weight;
+  let word = req.query.word;
+  let songID = req.query.songID;
+  funcs.get_weight(songID,word).then(function(result)
+   {
+     res.send(
+       {
+         weight: result
+       }
+     )
+   })
+});
 
  exports.ret_io = function (){return io};
  console.log('Listening on 8888');
