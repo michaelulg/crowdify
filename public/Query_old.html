@@ -1,83 +1,25 @@
-<!DOCTYPE html>
-<html lang="en">
+<!doctype html>
+<html>
   <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    
-    <!-- SEO Meta Tags -->
-    <meta name="description" content="Crowdify is a platform that extends Spotify's abilities using crowdsourcing mechanisms">
-    <meta name="author" content="Crowdify">
-
-    <!-- Webpage Title -->
-    <title>Crowdify - Query</title>
-    
-    <!-- Styles -->
-    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600&display=swap" rel="stylesheet">
-    <link href="css/bootstrap.css" rel="stylesheet">
-    <link href="css/fontawesome-all.min.css" rel="stylesheet">
-    <link href="css/swiper.css" rel="stylesheet">
-    <link href="css/magnific-popup.css" rel="stylesheet">
-    <link href="css/styles.css" rel="stylesheet">
-    <link href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css" rel="stylesheet">
-	
-	<!-- Favicon  -->
-    <link rel="icon" href="images/logo_circle.png">
-    <script src="https://kit.fontawesome.com/6f246cdb03.js" crossorigin="anonymous"></script>
-
+    <title>Example of the Authorization Code flow with Spotify</title>
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
+    <style type="text/css">
+      #login, #loggedin {
+        display: none;
+      }
+      .text-overflow {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        width: 500px;
+      }
+    </style>
   </head>
 
-  <body data-spy="scroll" data-target=".fixed-top">
-
-    <!-- Navigation -->
-    <nav class="navbar navbar-expand-lg fixed-top navbar-dark">
-      <div class="container">
-          
-          <!-- Text Logo - Use this if you don't have a graphic logo -->
-          <!-- <a class="navbar-brand logo-text page-scroll" href="index.html">Leon</a> -->
-
-          <!-- Image Logo -->
-          <a class="navbar-brand logo-image" href="index.html"><img src="images/logo_circle.png" alt="alternative"></a> 
-
-          <button class="navbar-toggler p-0 border-0" type="button" data-toggle="offcanvas">
-              <span class="navbar-toggler-icon"></span>
-          </button>
-
-          <div class="navbar-collapse offcanvas-collapse" id="navbarsExampleDefault">
-              <ul class="navbar-nav ml-auto">
-                  <li class="nav-item">
-                      <a class="nav-link page-scroll" href="article.html">Article <span class="sr-only">(current)</span></a>
-                  </li>
-                  <li class="nav-item">
-                      <a class="nav-link page-scroll" href="features.html">Features</a>
-                  </li>
-                  <li class="nav-item">
-                      <a class="nav-link page-scroll" href="pricing.html">Pricing</a>
-                  </li>
-                  <li class="nav-item dropdown">
-                      <a class="nav-link dropdown-toggle" href="#" id="dropdown01" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Drop</a>
-                      <div class="dropdown-menu" aria-labelledby="dropdown01">
-                          <a class="dropdown-item page-scroll" href="terms.html">Terms Conditions</a>
-                          <div class="dropdown-divider"></div>
-                          <a class="dropdown-item page-scroll" href="privacy.html">Privacy Policy</a>
-                      </div>
-                  </li>
-                  <li class="nav-item">
-                      <a class="nav-link page-scroll" href="contact.html">Contact</a>
-                  </li>
-              </ul>
-              <span class="nav-item">
-                  <a class="btn-outline-sm page-scroll" href="#download">Download</a>
-              </span>
-          </div> <!-- end of navbar-collapse -->
-      </div> <!-- end of container -->
-  </nav> <!-- end of navbar -->
-  <!-- end of navigation -->
-
-
+  <body>
     <div class="container">
       <div id="login">
-        <h1>Please log in</h1>
+        <h1>This is an example of the Authorization Code flow</h1>
         <a href="/login" class="btn btn-primary">Log in with Spotify</a>
       </div>
       <div id="loggedin">
@@ -118,6 +60,14 @@
       </div>
     </script>
 
+    <script id="oauth-template" type="text/x-handlebars-template">
+      <!--<h2>oAuth info</h2>-->
+      <!--<dl class="dl-horizontal">
+        <dt>Access token</dt><dd class="text-overflow">{{access_token}}</dd>
+        <dt>Refresh token</dt><dd class="text-overflow">{{refresh_token}}</dd>-->
+      </dl>
+    </script>
+
     <script id = "suggested-words-template" type = "text/x-handlebars-template">
       <h2> You can also pick from this list: </h2>
       <button class="btn btn-default" id="option_1">{{option_1}}</button>
@@ -147,147 +97,6 @@
         </table>
       </center>
     </script>
-
-    <!-- Features -->
-    <div id="features" class="tabs">
-      <div class="container">
-          <div class="row">
-              <div class="col-lg-12">
-                  <h2 class="h2-heading">Special features designed to improve life work balance</h2>
-              </div> <!-- end of col -->
-          </div> <!-- end of row -->
-          <div class="row">
-
-              <!-- Tabs Links -->
-              <ul class="nav nav-tabs" id="templateTabs" role="tablist">
-                  <li class="nav-item">
-                      <a class="nav-link active" id="nav-tab-1" data-toggle="tab" href="#tab-1" role="tab" aria-controls="tab-1" aria-selected="true"><i class="fas fa-cog"></i>CONFIGURING</a>
-                  </li>
-                  <li class="nav-item">
-                      <a class="nav-link" id="nav-tab-2" data-toggle="tab" href="#tab-2" role="tab" aria-controls="tab-2" aria-selected="false"><i class="fas fa-binoculars"></i>TRACKING</a>
-                  </li>
-                  <li class="nav-item">
-                      <a class="nav-link" id="nav-tab-3" data-toggle="tab" href="#tab-3" role="tab" aria-controls="tab-3" aria-selected="false"><i class="fas fa-search"></i>MONITORING</a>
-                  </li>
-              </ul>
-              <!-- end of tabs links -->
-
-
-              <!-- Tabs Content-->
-              <div class="tab-content" id="templateTabsContent">
-                  
-                  <!-- Tab -->
-                  <div class="tab-pane fade show active" id="tab-1" role="tabpanel" aria-labelledby="tab-1">
-                      <div class="container">
-                          <div class="row">
-                              <div class="col-lg-6">
-                                  <div class="image-container">
-                                      <img class="img-fluid" src="images/features-1.jpg" alt="alternative">
-                                  </div> <!-- end of image-container -->
-                              </div> <!-- end of col -->
-                              <div class="col-lg-6">
-                                  <div class="text-container">
-                                      <h3>Prioritize important actions</h3>
-                                      <p>Leon's features are designed to help you improve your time management skills and become a better organized person. Organize your tasks and schedule your appointments</p>
-                                      <ul class="list-unstyled li-space-lg">
-                                          <li class="media">
-                                              <i class="fas fa-square"></i>
-                                              <div class="media-body">Night reading mode with reduced lightning and more color</div>
-                                          </li>
-                                          <li class="media">
-                                              <i class="fas fa-square"></i>
-                                              <div class="media-body">Monitor the number more of healthy steps that you word daily</div>
-                                          </li>
-                                          <li class="media">
-                                              <i class="fas fa-square"></i>
-                                              <div class="media-body">Perform better more by following all the tips and tricks</div>
-                                          </li>
-                                      </ul>
-                                      <a class="btn-solid-reg page-scroll" href="#download">Download</a>
-                                  </div> <!-- end of text-container -->
-                              </div> <!-- end of col -->
-                          </div> <!-- end of row -->
-                      </div> <!-- end of container -->
-                  </div> <!-- end of tab-pane -->
-                  <!-- end of tab -->
-
-                  <!-- Tab -->
-                  <div class="tab-pane fade" id="tab-2" role="tabpanel" aria-labelledby="tab-2">
-                      <div class="container">
-                          <div class="row">
-                              <div class="col-lg-6">
-                                  <div class="image-container">
-                                      <img class="img-fluid" src="images/features-2.jpg" alt="alternative">
-                                  </div> <!-- end of image-container -->
-                              </div> <!-- end of col -->
-                              <div class="col-lg-6">
-                                  <div class="text-container">
-                                      <h3>Get through daily work</h3>
-                                      <p>Leon's features are designed to help you improve your time management skills and become a better organized person. Organize your tasks and schedule your appointments</p>
-                                      <ul class="list-unstyled li-space-lg">
-                                          <li class="media">
-                                              <i class="fas fa-square"></i>
-                                              <div class="media-body">Night reading mode with reduced lightning and more color</div>
-                                          </li>
-                                          <li class="media">
-                                              <i class="fas fa-square"></i>
-                                              <div class="media-body">Monitor the number more of healthy steps that you word daily</div>
-                                          </li>
-                                          <li class="media">
-                                              <i class="fas fa-square"></i>
-                                              <div class="media-body">Perform better more by following all the tips and tricks</div>
-                                          </li>
-                                      </ul>
-                                      <a class="btn-solid-reg page-scroll" href="#download">Download</a>
-                                  </div> <!-- end of text-container -->
-                              </div> <!-- end of col -->
-                          </div> <!-- end of row -->
-                      </div> <!-- end of container -->
-                  </div> <!-- end of tab-pane -->
-                  <!-- end of tab -->
-
-                  <!-- Tab -->
-                  <div class="tab-pane fade" id="tab-3" role="tabpanel" aria-labelledby="tab-3">
-                      <div class="container">
-                          <div class="row">
-                              <div class="col-lg-6">
-                                  <div class="image-container">
-                                      <img class="img-fluid" src="images/features-3.jpg" alt="alternative">
-                                  </div> <!-- end of image-container -->
-                              </div> <!-- end of col -->
-                              <div class="col-lg-6">
-                                  <div class="text-container">
-                                      <h3>Gather experience points</h3>
-                                      <p>Leon's features are designed to help you improve your time management skills and become a better organized person. Organize your tasks and schedule your appointments</p>
-                                      <ul class="list-unstyled li-space-lg">
-                                          <li class="media">
-                                              <i class="fas fa-square"></i>
-                                              <div class="media-body">Night reading mode with reduced lightning and more color</div>
-                                          </li>
-                                          <li class="media">
-                                              <i class="fas fa-square"></i>
-                                              <div class="media-body">Monitor the number more of healthy steps that you word daily</div>
-                                          </li>
-                                          <li class="media">
-                                              <i class="fas fa-square"></i>
-                                              <div class="media-body">Perform better more by following all the tips and tricks</div>
-                                          </li>
-                                      </ul>
-                                      <a class="btn-solid-reg page-scroll" href="#download">Download</a>
-                                  </div> <!-- end of text-container -->
-                              </div> <!-- end of col -->
-                          </div> <!-- end of row -->
-                      </div> <!-- end of container -->
-                  </div><!-- end of tab-pane -->
-                  <!-- end of tab -->
-
-              </div> <!-- end of tab-content -->
-              <!-- end of tabs content -->
-
-          </div> <!-- end of row --> 
-      </div> <!-- end of container --> 
-  </div> <!-- end of tabs -->
-  <!-- end of features -->
 
     <script src="//cdnjs.cloudflare.com/ajax/libs/handlebars.js/2.0.0-alpha.1/handlebars.min.js"></script>
     <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
@@ -498,13 +307,5 @@
         }
       })();
     </script>
-    <script src="js/jquery.min.js"></script> <!-- jQuery for Bootstrap's JavaScript plugins -->
-    <script src="js/bootstrap.min.js"></script> <!-- Bootstrap framework -->
-    <script src="js/jquery.easing.min.js"></script> <!-- jQuery Easing for smooth scrolling between anchors -->
-    <script src="js/swiper.min.js"></script> <!-- Swiper for image and text sliders -->
-    <script src="js/jquery.magnific-popup.js"></script> <!-- Magnific Popup for lightboxes -->
-    <script src="js/morphext.min.js"></script> <!-- Morphtext rotating text in the header -->
-    <script src="js/scripts.js"></script> <!-- Custom scripts -->
-
   </body>
 </html>

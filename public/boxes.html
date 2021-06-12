@@ -1,21 +1,43 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"> 
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
     <link rel="stylesheet" type="text/css" href="./css/style_boxes.css">
+
+    <script src="//cdnjs.cloudflare.com/ajax/libs/handlebars.js/2.0.0-alpha.1/handlebars.min.js"></script>
+    <script src="js/jquery.min.js"></script> <!-- jQuery for Bootstrap's JavaScript plugins -->
+    <script src="js/bootstrap.min.js"></script> <!-- Bootstrap framework -->
+    <script src="js/jquery.easing.min.js"></script> <!-- jQuery Easing for smooth scrolling between anchors -->
+    <script src="js/swiper.min.js"></script> <!-- Swiper for image and text sliders -->
+    <script src="js/jquery.magnific-popup.js"></script> <!-- Magnific Popup for lightboxes -->
+    <script src="js/morphext.min.js"></script> <!-- Morphtext rotating text in the header -->
+    <script src="js/scripts.js"></script> <!-- Custom scripts -->
+    <script src="//cdnjs.cloudflare.com/ajax/libs/handlebars.js/2.0.0-alpha.1/handlebars.min.js"></script>
+    <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
+
     <script type="text/javascript" src="./js/app.js"></script>
+    
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="Crowdify is a platform that extends Spotify's abilities using crowdsourcing mechanisms">
+    <meta name="author" content="Crowdify">
+
+    <!-- Webpage Title -->
+    <title>Crowdify - Main page</title>
+	
+	<!-- Favicon  -->
+    <link rel="icon" href="images/logo_circle.png">
+    <script src="https://kit.fontawesome.com/6f246cdb03.js" crossorigin="anonymous"></script>
 </head>
 
 <body onload="defaultGrid()">
     <div id="container">
     </div>
     <div class="wrapper">
-        <input type="text" class="input" 
+        <input type="text" class="input" id="search_term"
         placeholder="What are you looking for?">
-        <div class="searchbtn"><i class="fas fa-search"></i></div>
+        <btn class="searchbtn" onclick="showsearch()"><i class="fas fa-search"></i></div>
     </div>
     <!-- side bar -->
 <nav>
@@ -56,6 +78,20 @@
 
      <!-- end of side bar -->
       
+<script>
+let songs;
+let string = "abcd";
+$.ajax({
+  url: '\search',
+  data: {
+    string : string
+  },
+  success: function(response) {
+    songs = response.songs;
+  }
+})
+
+</script>
 
 </body>
 </html>
