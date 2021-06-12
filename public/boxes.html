@@ -56,6 +56,19 @@
 
      <!-- end of side bar -->
       
-
+<script>
+let songs = ["Nad Ned","Nad Ned","helter skelter"];
+$.ajax({
+  url: '\search',
+  data: {
+  songID: songID,
+  name: name,
+  views: popularity 
+  },
+  success: function(response) {
+    songs = response.words;
+  }
+})
+</script>
 </body>
 </html>
