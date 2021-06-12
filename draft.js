@@ -365,6 +365,20 @@ app.get('/Game', (req, res) => {
    })
  })
 
+ app.get("/search", function(req,res)
+ {
+   let string = req.query.string;
+   let songs;
+   funcs.search(string).then(function(result)
+   {
+     res.send(
+       {
+         songs: result
+       }
+     )
+   })
+ });
+
  app.get("/get/superusers", function(req,res)
  {
    funcs.get_super_users().then(function(result)

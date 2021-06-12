@@ -4,13 +4,26 @@ var dictionary = new Typo('en_US');
 var thesaurus = require("thesaurus");
 var neo4j = require('neo4j-driver'); // .v1
 
-const max_chooses = 10; // the #chooses from each song before refresh 
+const max_chooses = 100; // the #chooses from each song before refresh 
 const spam_punishment = -2; // the score punishment for adding spam relation 
 const contribution_reward = 1; // the score revard for contribution of a new relation
 const spam_limit = max_chooses/10; // the minimal value of the 'new_weight' filed of 
                                  // song-to-word relation to be not classified as spam
 const user_spam_limit = 0 // the minimal SCORE for user to be considered as not spammer
 const superusers = 3; // the amount of superusers
+const stop_words = ["i", "me", "my", "myself", "we", "our", "ours", "ourselves", "you", "your",
+					"yours", "yourself", "yourselves", "he", "him", "his", "himself", "she",
+					"her", "hers", "herself", "it", "its", "itself", "they", "them", "their",
+				    "theirs", "themselves", "what", "which", "who", "whom", "this", "that", 
+					"these", "those", "am", "is", "are", "was", "were", "be", "been", "being",
+					"have", "has", "had", "having", "do", "does", "did", "doing", "a", "an",
+					"the", "and", "but", "if", "or", "because", "as", "until", "while", "of", 
+					"at", "by", "for", "with", "about", "against", "between", "into", "through", 
+					"during", "before", "after", "above", "below", "to", "from", "up", "down",
+					"in", "out", "on", "off", "over", "under", "again", "further", "then", "once", 
+					"here", "there", "when", "where", "why", "how", "all", "any", "both", "each", 
+					"few", "more", "most", "other", "some", "such", "no", "nor", "not", "only", "own", 
+					"same", "so", "than", "too", "very", "can", "will", "just", "should", "now"]
 
 //===================== Additional Functions ======================
 
@@ -356,7 +369,7 @@ async function verify_connection(songID, word) {
 
 // Game Button:
 // When the game button is pressed, this function returns
-// the list of words that we offer to the user (In 
+// the list of 5 (or less) words that we offer to the user (In 
 // addition to the option to add a word). The words will 
 // be arranged in the order in which they would appear
 // in the site.
@@ -382,10 +395,13 @@ async function get_offers(songID, name, views){
 		}
 	});
 
-	//-----------------------------------------
-    // Cut the best and the worst ? elements ?
-    //-----------------------------------------
-
+	let len = words.length;
+	if(len > 4){
+		return (words.slice(0,3)).concat(words.slice(len-2, len));
+	}
+	else if(len == 4){
+		return (words.slice(0,3)).concat(words.slice(len-1, len));
+	}
 	return words;
 }
 
@@ -502,12 +518,44 @@ async function get_superusers(){
 
 //========================== Second Game ==========================
 
+// Return a list of the 10 most popular songs
+
+async function popular_songs(){
+	let query = `MATCH (s:Song)
+				 RETURN s.songID
+				 ORDER BY s.views DESC
+				 LIMIT 10`;
+	let mesg = '-Extract the most popular songs'
+	let ans = await run_query(query, mesg);
+
+	let res = [];
+	ans.records.forEach(function(record){
+		res.push(record._fields[0]);
+	});
+
+	return res;
+}
+
+//-----------------------------------------------------------------
+
+async function get_weight(songID, word){
+	let query = `MATCH (s:Song {songID: "` + songID + `"})
+				 OPTIONAL MATCH (s)-[l:s_TO_w]->(w)
+				 WHERE w.name = "` + word + `"
+				 UNWIND [l.weight, l.new_weight] AS tmp
+				 RETURN max(tmp)`;
+	let mesg = '-Extract MAX(weight, new_weight) of "' + songID + '-' + word + '" song-word relation.';
+	let ans = await run_query(query, mesg);
+
+	return ans.records[0]._fields[0]["low"];
+}
+
 //========================= Search Engine =========================
 
 // Returns a list of similar words
 
 async function synonyms(word){
-	console.log("\x1b[35m%s\x1b[0m", '\nExtract synonyms for the word "' + word + '".');
+	console.log('-Extract synonyms for the word "' + word + '".');
 	return thesaurus.find(word);
 }
 
@@ -526,15 +574,97 @@ async function lemmatize_word(word){
 
 //-----------------------------------------------------------------
 
-// DONT WORK YET!
 // Return ordered list of songs
-// dont forget to convert to lowerCase!
 
-async function search(word){
-	let lem_word = lemmatize_word(word.toLowerCase());
-	let search_list = synonyms(lem_word);
+async function search(string){
+	console.log("\x1b[35m%s\x1b[0m", '\nSearch for the song"' + string + '":');
+	let song_dict = {}; // { songID: relation_strength, ... }
 
-	return 0;
+	// all to lower case -> split by spaces
+	let tmp = string.toLowerCase(); 
+	let words = tmp.split(" ");
+
+	// remove all stop words
+	tmp = [];
+	let len = words.length;
+	for(i=0; i<len; i++){
+		if(!stop_words.includes(words[i])){
+			tmp.push(words[i]);
+		}
+	}
+	words = tmp;
+
+	// lemmatize -> find synonyms -> add to 'words'
+	len = words.length;
+	for(i=0; i<len; i++){
+		words[i] = await lemmatize_word(words[i]); 
+		tmp = await synonyms(words[i]);
+		tmp = tmp.slice(0,3);
+		for(j=0; j<tmp.length; j++){
+			words.push(tmp[j]);
+		}
+	}
+	
+	// search song titles that included in 'words'
+	console.log('-Search songs with titles that contains:');
+	len = words.length;
+	let title;
+	for(i=0; i<len; i++){
+		title = words[i];
+		let query = `MATCH (s:Song)
+					 WHERE s.name CONTAINS "` + title + `"
+					 RETURN s.songID, s.views`;
+		let mesg = '  -> "' + title + `"`;
+		ans = await run_query(query, mesg);
+
+		//add the found songs to the song_dict
+		ans.records.forEach(function(record){
+			song_dict[record._fields[0]] = record._fields[1]['low'];
+		});
+	}
+
+	// search words that included in 'words'
+	console.log('-Search songs related to words that contain:');
+	for(i=0; i<len; i++){
+		title = words[i];
+		query = `MATCH (w:Word)
+				 WHERE w.name CONTAINS "` + title + `"
+				 OPTIONAL MATCH (w)<-[l:s_TO_w]-(s)
+				 UNWIND [s.views*l.weight, s.views*l.new_weight] AS tmp
+				 RETURN s.songID, max(tmp) AS strength`;
+		mesg = '  -> "' + title + '"';
+		ans = await run_query(query, mesg);
+
+		//add the found songs to the song_dict
+		ans.records.forEach(function(record){
+			if(song_dict[record._fields[0]] == null){
+				song_dict[record._fields[0]] = record._fields[1]['low']/max_chooses;
+			} 
+			else{
+				song_dict[record._fields[0]] += record._fields[1]['low']/max_chooses;
+			}
+		});
+	}
+
+	// reconstract song_dict
+	tmp = [];
+	results = [];
+	for(var key in song_dict){
+		tmp.push({
+			songID: key,
+			strength: song_dict[key]
+		});
+	}
+
+	// sort song_dict by strength
+	tmp.sort((a, b) => (a.strength > b.strength) ? -1 : 1);
+
+	// cleanly rewrite the results 
+	tmp.forEach(function(elem){
+		results.push(elem.songID);
+	});
+	
+	return results;
 }
 
 //========================= Autocorrect ===========================
@@ -546,23 +676,45 @@ async function autocorrect(word){
 
 //========================= Init Data Base ========================
 
-//============================= Test ==============================
-
-async function doTest(){
-
-	// ( userID, username, songID, name, views, word )
-	for(i=0; i<2; i++){
-		await add_word(i, "lion" + i, 5, "sliM shAdy", 52003, "Found");
-		console.log(await get_superusers());
-	}
+async function init_exp(){
+	// add_word: ( userID, username, songID, name, views, word )
+	await add_word("1", "The Creator", "1", "crazy", 3243824, "ninet");
+	await add_word("1", "The Creator", "1", "crazy", 3243824, "crazy");
+	await add_word("1", "The Creator", "2", "The Ocean", 158943245, "Mike Perry");
+	await add_word("1", "The Creator", "2", "The Ocean ", 158943245, "Shy Martin");
+	await add_word("1", "The Creator", "2", "The Ocean ", 158943245, "dive");
+	await add_word("1", "The Creator", "2", "The Ocean ", 158943245, "ocean");
+	await add_word("1", "The Creator", "3", "Am I Wrong", 495844979, "Nico");
+	await add_word("1", "The Creator", "5", "R.I.O", 609895, "Nico");
+	await add_word("1", "The Creator", "0", "Waka Waka", 2842385500, "Shakira");
+	await add_word("1", "The Creator", "2", "The Ocean", 158943245, "deep");
+	await add_word("1", "The Creator", "5", "R.I.O", 609895, "Party Shaker");
+	await add_word("1", "The Creator", "6", "Stereo Hearts", 550422993, "Gym Class Heroes");
+	await add_word("1", "The Creator", "6", "Stereo Hearts", 550422993, "Adam Levine");
+	await add_word("1", "The Creator", "6", "Stereo Hearts", 550422993, "sterio");
+	await add_word("1", "The Creator", "7", "Alien", 11343207, "around we go");
+	await add_word("1", "The Creator", "7", "Alien", 11343207, "filling like an alien");
 }
 
-doTest().then(function(result){
-	console.log('\nDone test.\n'); 
-});
+//============================= Test ==============================
+
+async function Test(){
+	//await init_exp();
+	//console.log(await search("we around"));
+	//console.log(await get_offers(5, "crazy", 2001));
+	//console.log(await popular_songs());
+	//console.log(await get_weight("1", "ninet"));
+}
+
+// Test().then(function(result){
+// 	console.log('\nDone test.\n'); 
+// });
 
 module.exports.get_offers = get_offers;
 module.exports.add_word = add_word;
+module.exports.search = search;
+module.exports.popular_songs = popular_songs;
+module.exports.get_weight = get_weight;
 
 
 
