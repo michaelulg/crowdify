@@ -79,18 +79,45 @@
      <!-- end of side bar -->
       
 <script>
-let songs = ["Nad Ned","Nad Ned","helter skelter"];
+let song_ids;
+let string = "abcd";
 $.ajax({
   url: '\search',
   data: {
-  songID: songID,
-  name: name,
-  views: popularity 
+    string : string
   },
   success: function(response) {
-    songs = response.words;
+    song_ids = response.songs;
   }
 })
+
+let songs = song_ids;
+
+let songname;
+let image_url;
+let artist;
+let song_url;
+
+for (let i = 0; i < songs.length; i++) {
+  let songID = song_ids[i];
+  $.ajax({
+    url: '\get_track_name',
+    data: {
+      songID : songID
+    }, 
+    success: function(response) {
+      songname = response.songname;
+      image_url = response.image_url;
+      artist = response.artist;
+      song_url = response.song_url;
+    }
+  })
+  songs[i] = {songname : songname, artist : artist, image_url : image_url, song_url : song_url};
+}
+
+
+
 </script>
+
 </body>
 </html>
