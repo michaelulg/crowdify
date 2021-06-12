@@ -368,7 +368,6 @@ app.get('/Game', (req, res) => {
  app.get("/search", function(req,res)
  {
    let string = req.query.string;
-   let songs;
    funcs.search(string).then(function(result)
    {
      res.send(
@@ -378,6 +377,30 @@ app.get('/Game', (req, res) => {
      )
    })
  });
+
+ app.get("/get_track_name",function(req,res)
+ {
+  var songID = req.query.songID;
+  var songname;
+  var popularity;
+  var image_url;
+  var artist;
+  var song_url;
+  var options = {
+    url: 'https://api.spotify.com/v1/tracks/'+songID,
+    headers: { 'Authorization': 'Bearer ' + global_access_token },
+    json: true
+  };
+  request.get(options, function(error, response, body) {
+    // console.log('https://api.spotify.com/v1/tracks/'+songID);
+    image_url = body.album.images[1].url;
+    songname = body.name; 
+    popularity = body.popularity; 
+    artist = body.album.artists[0].name;
+    song_url = body.uri;
+    res.send({image_url:image_url, songname: songname, popularity: popularity, artist: artist, song_url: song_url})
+  });
+ })
 
  app.get("/get/superusers", function(req,res)
  {
