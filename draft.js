@@ -397,6 +397,7 @@ app.get('/Game', (req, res) => {
 
  app.get("/get_track_name",function(req,res)
  {
+  var curr_access_token = url.parse(req.url,true).query.access_token;
   var songID = req.query.songID;
   var songname;
   var popularity;
@@ -405,7 +406,7 @@ app.get('/Game', (req, res) => {
   var song_url;
   var options = {
     url: 'https://api.spotify.com/v1/tracks/'+songID,
-    headers: { 'Authorization': 'Bearer ' + global_access_token },
+    headers: { 'Authorization': 'Bearer ' + curr_access_token },
     json: true
   };
   request.get(options, function(error, response, body) {
