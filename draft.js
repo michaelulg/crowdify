@@ -195,9 +195,11 @@ app.get('/song_render',function(req,res) /*gets a random position in the recentl
   });
 
 })    
-async function req_func(curr_access_token)
-{
+
+app.get('/get_tracks', (req,res)=>{
+
   let recent_tracks;
+  let curr_access_token = req.query.curr_access_token;
   options = 
          {
           url: 'https://api.spotify.com/v1/me/player/recently-played',
@@ -208,37 +210,37 @@ async function req_func(curr_access_token)
     request.get(options, function(error, response, body) {
       recent_tracks = body;
     });
-    return recent_tracks;
-}
+    res.send(recent_tracks);
+})
 
 app.get('/Game', (req, res) => {
     var curr_access_token = url.parse(req.url,true).query.access_token;
     var curr_refresh_token = url.parse(req.url,true).query.refresh_token;
 
-    var options = {
-      url: 'https://api.spotify.com/v1/me',
-      headers: { 'Authorization': 'Bearer ' + curr_access_token },
-      json: true
-    };
+    // var options = {
+    //   url: 'https://api.spotify.com/v1/me',
+    //   headers: { 'Authorization': 'Bearer ' + curr_access_token },
+    //   json: true
+    // };
 
-    // use the access token to access the Spotify Web API
-    request.get(options, function(error, response, body) {
-     user_id = body.id;
-     console.log(user_id);
-    });
+    // // use the access token to access the Spotify Web API
+    // request.get(options, function(error, response, body) {
+    //  user_id = body.id;
+    //  console.log(user_id);
+    // });
 
-    options = 
-         {
-          url: 'https://api.spotify.com/v1/me/player/recently-played',
-          headers: { 'Authorization': 'Bearer ' + curr_access_token },
-          json: true
-         };
+    // options = 
+    //      {
+    //       url: 'https://api.spotify.com/v1/me/player/recently-played',
+    //       headers: { 'Authorization': 'Bearer ' + curr_access_token },
+    //       json: true
+    //      };
 
-    request.get(options, function(error, response, body) {
-      recent_tracks = body;
-      // console.log(body.items[0].track.name);
-    });
-    
+    // request.get(options, function(error, response, body) {
+    //   recent_tracks = body;
+    //   console.log(body.items[0].track.name);
+    // });
+    participents.push({curr_access_token:curr_access_token});
 
     io.on('connection', (socket) => {
       if(flag != socket.id)
@@ -281,7 +283,7 @@ app.get('/Game', (req, res) => {
         if(recent_tracks != undefined)
         {console.log(recent_tracks.items[0].track.name);}
         // console.log("Connected");
-        participents.push({user_id: user_id, recent_tracks: recent_tracks});
+        
         // console.log(participents.length);
         if(participents.length == 1)
         {io.emit('IdentifyUser',1); /*need to emit to specific room?*/
@@ -296,11 +298,11 @@ app.get('/Game', (req, res) => {
           io.to(games_num).emit('IdentifyUser',2); /*second user will go here, first user will stay with id =1?*/
           // console.log("Here");
           // console.log(socket.id);
-          user_1 = participents.pop();
           user_2 = participents.pop();
+          user_1 = participents.pop();
           // console.log(participents.length);
          //console.log(user_2.recent_tracks)
-          io.to(games_num).emit('InitGame', {user_1:user_1.recent_tracks, user_2: user_2.recent_tracks, game_id: games_num});
+          io.to(games_num).emit('InitGame', {user_1:user_1.curr_access_token, user_2: user_2.curr_access_token, game_id: games_num});
           /*FIX! NEED TO FLUSH AGAIN AND AGIN TILL THERE IS 0/1 PARTICIPENTS IN THE ARRAY!!!!!!!!*/
         }
       }

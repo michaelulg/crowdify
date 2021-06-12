@@ -84,8 +84,32 @@
       document.getElementById("End").style.display = "none";
       /*replace room-screen with game screen*/
         flag = 0; /*we dont allow more than one click*/
-        user_1_tracks = data.user_1;
-        user_2_tracks = data.user_2;
+        user_1_token = data.user_1;
+        user_2_token = data.user_2;
+        if(document.getElementById("User").value == 1)
+        {
+          alert(user_1_token);
+          $.ajax({
+            url: '\get_tracks',
+            data: {
+                      user_1_token:curr_access_token
+                    },
+                    success: function(response) {
+                      user_1_tracks = response;
+                    }
+        })}
+        else
+        {
+          alert(user_2_token);
+          $.ajax({
+            url: '\get_tracks',
+            data: {
+                      curr_access_token: user_2_token
+                    },
+                    success: function(response) {
+                      user_2_tracks = response;
+                    }
+        })}
         game_id = data.game_id;
         document.getElementById("userid").innerHTML = data.game_id;
         player.innerHTML = data.user_1.items[i].track.name;
@@ -156,7 +180,7 @@
     {
       i += 1;
       flag = 0;
-      if(i % 2 == 0 || user_2_tracks == undefined)
+      if(i % 2 == 0)
       {
         document.getElementById("name").innerHTML = user_1_tracks.items[i].track.name;
         let words;
@@ -178,7 +202,7 @@
         option1.value = 1;
         option2.value = 1;
       }
-      if(i % 2 == 1 && user_2_tracks != undefined)
+      if(i % 2 == 1)
       {
         
         document.getElementById("name").innerHTML = user_2_tracks.items[i].track.name;
