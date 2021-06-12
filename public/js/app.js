@@ -59,30 +59,8 @@ function makeColumns(cellNum) {
             let newCell = document.createElement("a");
             newCell.setAttribute("href", "/Query#access_token="+access_token+ "&refresh_token="+refresh_token);
             
-            /*var error = params.error;
-            var image_url;
-            var pos = Math.floor((Math.random()*10 + 1));
-            if (error) {
-                alert('There was an error during the authentication');
-            } else {
-                if(access_token) {
-                    $.ajax({
-                        url: '\song_render',
-                        data: {
-                          'pos': pos,
-                           access_token: access_token
-                        },
-                        success: function(response) {
-                          image_url = response.image_url;
-                          alert(image_url);
-                        }
-                    });        
-                }
-            }*/
-            
-
             // newCell.setAttribute("href","/Game?access_token="+access_token+"&refresh_token="+refresh_token);
-            // newCell.style.cursor = "default";
+            newCell.style.cursor = "default";
             const randomColor = Math.floor(Math.random()*16777215).toString(16);
             while (randomColor == 000000) {
                 const randomColor = Math.floor(Math.random()*16777215).toString(16);
@@ -100,20 +78,59 @@ function mouseOver() {
 function mouseOut() {
     document.getElementById("container").style.backgroundColor = "red";
 }
-
+  
 function showsearch() {
     var search = document.getElementById("search_term").value;
-    alert(search)
     window.location.href = "search?" + search;
+    alert(search);
 }
 
 function getSearchTerm() {
     var elem = document.getElementById("search-head");
-    elem.insertAdjacentHTML('beforeend', '<h7>'+location.search.substring(1)+'</h7>')
-
-    alert('success');
+    elem.insertAdjacentHTML('beforeend', '<h7>'+decodeURI(location.search.substring(1))+'</h7>')
 }
 
-  
+function generateSongList() {
+    var elem = document.getElementById("search-head");
+
+    let song_ids = ["4O0LQKVT6hGmVGNwizmydg", "7mEDVrAHDnQJStDo8jKJJm", "1ISMa0THMDKFBq2UMfm02e", "63Wv3KNxCfnuUIW988TyIl", "2iRniYXjMHKmwXqA2jYXP7"];
+    let string = decodeURI(location.search.substring(1));
+    /*$.ajax({
+        url: '\search',
+        data: {
+            string : string
+        },
+        success: function(response) {
+            song_ids = response.songs;
+        }
+    })
+
+    let songs = song_ids; */
+    let songs = song_ids;
+
+    let songname;
+    let image_url;
+    let artist;
+    let song_url;
+
+    for (let i = 0; i < songs.length; i++) {
+        let songID = song_ids[i];
+        $.ajax({
+            url: '\get_track_name',
+            data: {
+                songID : songID
+            }, 
+            success: function(response) {
+                songname = response.songname;
+                image_url = response.image_url;
+                artist = response.artist;
+                song_url = response.song_url;
+            }
+        })
+        songs[i] = {songname : songname, artist : artist, image_url : image_url, song_url : song_url};
+        elem.insertAdjacentHTML('beforeend', '<h7>'+songname+'</h7><br>');
+    }
+}
+
 
 // defaultGrid();
