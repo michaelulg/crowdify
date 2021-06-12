@@ -37,7 +37,9 @@
  
  var access_token_global;  /*major problem with that. we cannot deal with multiple users*/
  var refresh_token_global; /*major problem with that. we cannot deal with multiple users*/
- var flag = ""; /*for some reason, without this flag which functions as a lock, the connection scrtipt happens reapetedly*/
+ var user_id;
+ var recent_tracks;
+ var flag = ""; /*for some reason, with out this flag which functions as a lock, the connection scrtipt happens reapetedly*/
  var participents = [];
  var games_arr = []; /*contains for each games: who answered for current round*/
  var games_num = 0;
@@ -212,8 +214,6 @@ async function req_func(curr_access_token)
 app.get('/Game', (req, res) => {
     var curr_access_token = url.parse(req.url,true).query.access_token;
     var curr_refresh_token = url.parse(req.url,true).query.refresh_token;
-    var user_id;
-    var recent_tracks;
 
     var options = {
       url: 'https://api.spotify.com/v1/me',
@@ -224,6 +224,7 @@ app.get('/Game', (req, res) => {
     // use the access token to access the Spotify Web API
     request.get(options, function(error, response, body) {
      user_id = body.id;
+     console.log(user_id);
     });
 
     options = 
@@ -235,6 +236,7 @@ app.get('/Game', (req, res) => {
 
     request.get(options, function(error, response, body) {
       recent_tracks = body;
+      // console.log(body.items[0].track.name);
     });
     
 
@@ -276,6 +278,8 @@ app.get('/Game', (req, res) => {
         })
         flag = socket.id;
         // console.log(socket.id);
+        if(recent_tracks != undefined)
+        {console.log(recent_tracks.items[0].track.name);}
         // console.log("Connected");
         participents.push({user_id: user_id, recent_tracks: recent_tracks});
         // console.log(participents.length);
@@ -295,7 +299,7 @@ app.get('/Game', (req, res) => {
           user_1 = participents.pop();
           user_2 = participents.pop();
           // console.log(participents.length);
-          console.log(user_2.recent_tracks)
+         //console.log(user_2.recent_tracks)
           io.to(games_num).emit('InitGame', {user_1:user_1.recent_tracks, user_2: user_2.recent_tracks, game_id: games_num});
           /*FIX! NEED TO FLUSH AGAIN AND AGIN TILL THERE IS 0/1 PARTICIPENTS IN THE ARRAY!!!!!!!!*/
         }
