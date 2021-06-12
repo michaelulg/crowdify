@@ -59,6 +59,20 @@ function makeColumns(cellNum) {
             let newCell = document.createElement("a");
             newCell.setAttribute("href", "/Query#access_token="+access_token+ "&refresh_token="+refresh_token);
             
+            /*pos = Math.floor((Math.random()*10 + 1));
+            $.ajax({
+                url: '\song_render',
+                data: {
+                  'pos': pos,
+                   access_token: access_token
+                },
+                success: function(response) {
+                    songID = response.songID;
+                    popularity = response.popularity;
+                    song_name = response.songname;
+                }
+            });*/
+
             // newCell.setAttribute("href","/Game?access_token="+access_token+"&refresh_token="+refresh_token);
             newCell.style.cursor = "default";
             const randomColor = Math.floor(Math.random()*16777215).toString(16);
@@ -66,6 +80,8 @@ function makeColumns(cellNum) {
                 const randomColor = Math.floor(Math.random()*16777215).toString(16);
             };
             newCell.style.backgroundColor = "#" + randomColor;
+            newCell.setAttribute("style", 
+            "background-image: url(https://upload.wikimedia.org/wikipedia/commons/thumb/f/fb/Hotdog_-_Evan_Swigart.jpg/1280px-Hotdog_-_Evan_Swigart.jpg);background-size: 145px; width: 145px; height: 145px;");
             rows[j].appendChild(newCell).className = "cell";
         };
     };
