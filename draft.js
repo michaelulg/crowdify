@@ -66,6 +66,9 @@
   app.use('/Query', express.static(__dirname + '/public/Query.html'))
     .use(cors())
     .use(cookieParser());
+  app.use('/search', express.static(__dirname + '/public/search.html'))
+    .use(cors())
+    .use(cookieParser());
   
 
     var app2 = express();

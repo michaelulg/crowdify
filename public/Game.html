@@ -1,23 +1,47 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
-    <title>Socket.IO chat</title>
-    <style>
-      body { margin: 0; padding-bottom: 3rem; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+    
 
-      #form { background: rgba(0, 0, 0, 0.15); padding: 0.25rem; position: fixed; bottom: 0; left: 0; right: 0; display: flex; height: 3rem; box-sizing: border-box; backdrop-filter: blur(10px); }
-      #input { border: none; padding: 0 1rem; flex-grow: 1; border-radius: 2rem; margin: 0.25rem; }
-      #input:focus { outline: none; }
-      #form > button { background: #333; border: none; padding: 0 1rem; margin: 0.25rem; border-radius: 3px; outline: none; color: #fff; }
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-      #messages { list-style-type: none; margin: 0; padding: 0; }
-      #messages > li { padding: 0.5rem 1rem; }
-      #messages > li:nth-child(odd) { background: #efefef; }
-    </style>
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="Crowdify is a platform that extends Spotify's abilities using crowdsourcing mechanisms">
+    <meta name="author" content="Crowdify">
+
+    <!-- Webpage Title -->
+    <title>Crowdify - Game</title>
+
+    <!-- Styles -->
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600&display=swap" rel="stylesheet">
+    <link href="css/bootstrap.css" rel="stylesheet">
+    <link href="css/fontawesome-all.min.css" rel="stylesheet">
+    <link href="css/swiper.css" rel="stylesheet">
+    <link href="css/magnific-popup.css" rel="stylesheet">
+    <link href="css/styles.css" rel="stylesheet">
+
+    <!-- Favicon  -->
+    <link rel="icon" href="images/logo_circle.png">
+    <script src="https://kit.fontawesome.com/6f246cdb03.js" crossorigin="anonymous"></script>
+
   </head>
+
   <body>
-    <div id = "WaitingRoom">
-      Hello! Welcome...
+    <div id="details" class="basic-2">
+      <div id = "WaitingRoom">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-6">
+                  <div class="text-container">
+                    <h6>Welcome to the game page!</h6>
+                    <h3>Please wait while we find you a partner...</h3>
+                  </div>
+                </div>
+            </div>
+        </div>
+      </div>                  
     </div>
     <div id = "GameScreen">
       <div id = "User" value = 1>
@@ -39,7 +63,7 @@
     document.getElementById("GameScreen").style.display = "none";
     document.getElementById("End").style.display = "none";
     </script>
-    <script type = "text/javascript" src = "js/game_manager.js"></script>  
+    <script type = "text/javascript" src = "js/fixundef.js"></script>  
     <script  type="text/javascript" src="/socket.io/socket.io.js"></script>
     <script> 
     function getHashParams() {
@@ -73,8 +97,7 @@
     {
       if(lock_user_id == 0){
         document.getElementById("userid").innerHTML = socket.id;
-        document.getElementById("User").value = data;
-        
+        document.getElementById("User").value = data; 
         lock_user_id = 1;
       }
     })
@@ -90,10 +113,24 @@
         game_id = data.game_id;
         document.getElementById("userid").innerHTML = data.game_id;
         player.innerHTML = data.user_1.items[i].track.name;
-        option1.innerHTML = "data.user_1"; /*should be word from the data base*/
-        option2.innerHTML = "data.user_2"; /*should be word from the data base*/
-        option1.value = 1; /*should be rank of the word from DB*/
-        option2.value = 1; /*should be rank of the word from DB*/
+        let words;
+        // $.ajax({
+        //             url: '\get\offers',
+        //             data: {
+        //               songID: data.user_1.items[i].id,
+        //               name: data.user_1.items[i].id,
+        //               views: data.user_1.items[i].popularity
+        //             },
+        //             success: function(response) {
+        //               words = response.words;
+        //             }
+        // })
+        // option1.innerHTML = words[0]; 
+        // option2.innerHTML = words[1];
+        option1.innerHTML = "data1";
+        option2.innerHTML = "data2";
+        option1.value = 1; 
+        option2.value = 1; 
         
         option2.addEventListener('click', function()
         {
@@ -143,19 +180,52 @@
     {
       i += 1;
       flag = 0;
-      if(i % 2 == 0)
+      if(i % 2 == 0 || user_2_tracks == undefined)
       {
         document.getElementById("name").innerHTML = user_1_tracks.items[i].track.name;
-        option1.innerHTML = "data.user_1"; /*should be word from the data base*/
-        option2.innerHTML = "data.user_2"; /*should be word from the data base*/
+        let words;
+        // $.ajax({
+        //             url: '\get\offers',
+        //             data: {
+        //               songID: data.user_1.items[i].id,
+        //               name: data.user_1.items[i].id,
+        //               views: data.user_1.items[i].popularity
+        //             },
+        //             success: function(response) {
+        //               words = response.words;
+        //             }
+        // })
+        // option1.innerHTML = words[0]; 
+        // option2.innerHTML = words[1]; 
+        option1.innerHTML = "data1";
+        option2.innerHTML = "data2";
+        option1.value = 1;
+        option2.value = 1;
       }
-      if(i % 2 == 1)
+      if(i % 2 == 1 && user_2_tracks != undefined)
       {
+        
         document.getElementById("name").innerHTML = user_2_tracks.items[i].track.name;
-        option1.innerHTML = "data.user_3"; /*should be word from the data base*/
-        option2.innerHTML = "data.user_4"; /*should be word from the data base*/
+        let words;
+        // $.ajax({
+        //             url: '\get\offers',
+        //             data: {
+        //               songID: data.user_2.items[i].id,
+        //               name: data.user_2.items[i].id,
+        //               views: data.user_2.items[i].popularity
+        //             },
+        //             success: function(response) {
+        //               words = response.words;
+        //             }
+        // })
+        // option1.innerHTML = words[0]; 
+        // option2.innerHTML = words[1]; 
+        option1.innerHTML = "data1";
+        option2.innerHTML = "data2";
+        option1.value = 1;
+        option2.value = 1;
       }
-      if(i == 2)
+      if(i == 4)
       {
         if(document.getElementById("User").value == 1)
         {

@@ -57,10 +57,32 @@ function makeColumns(cellNum) {
             var access_token = params.access_token;
             var refresh_token = params.refresh_token;
             let newCell = document.createElement("a");
-            newCell.setAttribute("href", "/Query#access_token="+access_token+"&refresh_token="+refresh_token);
+            newCell.setAttribute("href", "/Query#access_token="+access_token+ "&refresh_token="+refresh_token);
+            
+            /*var error = params.error;
+            var image_url;
+            var pos = Math.floor((Math.random()*10 + 1));
+            if (error) {
+                alert('There was an error during the authentication');
+            } else {
+                if(access_token) {
+                    $.ajax({
+                        url: '\song_render',
+                        data: {
+                          'pos': pos,
+                           access_token: access_token
+                        },
+                        success: function(response) {
+                          image_url = response.image_url;
+                          alert(image_url);
+                        }
+                    });        
+                }
+            }*/
+            
 
-            //newCell.setAttribute("href","/Game?access_token="+access_token+"&refresh_token="+refresh_token);
-            newCell.style.cursor = "default";
+            // newCell.setAttribute("href","/Game?access_token="+access_token+"&refresh_token="+refresh_token);
+            // newCell.style.cursor = "default";
             const randomColor = Math.floor(Math.random()*16777215).toString(16);
             while (randomColor == 000000) {
                 const randomColor = Math.floor(Math.random()*16777215).toString(16);
@@ -77,6 +99,12 @@ function mouseOver() {
   
 function mouseOut() {
     document.getElementById("container").style.backgroundColor = "red";
+}
+
+function showsearch() {
+    var search = document.getElementById("search_term").value;
+    alert(search)
+    window.location.href = "search?" + search;
 }
 
   

@@ -17,8 +17,8 @@
     <link href="css/bootstrap.css" rel="stylesheet">
     <link href="css/fontawesome-all.min.css" rel="stylesheet">
     <link href="css/swiper.css" rel="stylesheet">
-	<link href="css/magnific-popup.css" rel="stylesheet">
-	<link href="css/styles.css" rel="stylesheet">
+    <link href="css/magnific-popup.css" rel="stylesheet">
+    <link href="css/styles.css" rel="stylesheet">
 	
 	<!-- Favicon  -->
     <link rel="icon" href="images/logo_circle.png">
@@ -349,7 +349,7 @@
         }
         var userID;
         var songID;
-        var popolarity;
+        var popularity;
         var username;
         var name; /*song's name*/
 
@@ -380,7 +380,7 @@
         } else {
           if (access_token) {
             // render oauth info
-            oauthPlaceholder.innerHTML = oauthTemplate({
+              oauthPlaceholder.innerHTML = oauthTemplate({
               access_token: access_token,
               refresh_token: refresh_token
             });
@@ -392,7 +392,7 @@
                 },
                 success: function(response) {
                   userID = response.id;
-                  username = response.name;
+                  username = response.display_name;
                   $('#login').hide();
                   $('#loggedin').show();
                 }
@@ -414,7 +414,7 @@
                   /*var image_url = get_image_url(items.id);*/
                   userProfilePlaceholder.innerHTML = userProfileTemplate(response);
                   songID = response.songID;
-                  popolarity = response.popolarity;
+                  popularity = response.popularity;
                   name = response.songname;
                   let words;
                   //var words = get_offers(songID);
@@ -424,7 +424,7 @@
                     data: {
                       songID: songID,
                       name: name,
-                      views: popolarity
+                      views: popularity 
                     },
                     success: function(response) {
                       words = response.words;
@@ -465,7 +465,7 @@
                 },
                 success: function(response) {
                   songID = response.songID;
-                  popolarity = response.popolarity;
+                  popularity = response.popularity;
                   name = response.songname;
                   /*var myrand = Math.floor((Math.random()*10 + 1));*/
                   /*var url = get_image_url("");
@@ -482,13 +482,13 @@
           document.getElementById('submit-data').addEventListener('click', function(req,res) {
             let word = document.getElementById("song-data").value;
             $.ajax({
-              url: '\add\word',
+              url: '\word',
               data: {
                 userID: userID,
                 songID: songID,
                 username: username,
                 name: name,
-                views: popolarity,
+                views: popularity,
                 word: word
               }
             }) 
@@ -504,7 +504,7 @@
                 word: word
               }
             })
-          }, false);
+          });
 
           document.getElementById('option_2').addEventListener('click',function(req,res){
             let word = document.getElementById("option_2").innerHTML;
@@ -516,7 +516,7 @@
                 word: word
               }
             })
-          }, false);
+          });
 
           document.getElementById('option_3').addEventListener('click',function(req,res){
             let word = document.getElementById("option_3").innerHTML;
