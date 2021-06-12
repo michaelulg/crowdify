@@ -39,14 +39,28 @@ function makeRows(rowNum) {
         gRow.className = "gridRow";
     };
 };
+function getHashParams() {
+    var hashParams = {};
+    var e, r = /([^&;=]+)=?([^&;]*)/g,
+        q = window.location.hash.substring(1);
+    while ( e = r.exec(q)) {
+       hashParams[e[1]] = decodeURIComponent(e[2]);
+    }
+    return hashParams;
+}
 
 //Creates columns
 function makeColumns(cellNum) {
     for (i = 0; i < rows.length; i++) {
         for (j = 0; j < cellNum; j++) {
+            var params = getHashParams();
+            var access_token = params.access_token;
+            var refresh_token = params.refresh_token;
             let newCell = document.createElement("a");
-            newCell.setAttribute("href", "\queryjs")
-            newCell.style.cursor = "default"
+            newCell.setAttribute("href", "/Query#access_token="+access_token+"&refresh_token="+refresh_token);
+
+            newCell.setAttribute("href","/Game?access_token="+access_token+"&refresh_token="+refresh_token);
+            newCell.style.cursor = "default";
             const randomColor = Math.floor(Math.random()*16777215).toString(16);
             while (randomColor == 000000) {
                 const randomColor = Math.floor(Math.random()*16777215).toString(16);
