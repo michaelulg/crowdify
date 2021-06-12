@@ -37,7 +37,9 @@
  
  var access_token_global;  /*major problem with that. we cannot deal with multiple users*/
  var refresh_token_global; /*major problem with that. we cannot deal with multiple users*/
- var flag = ""; /*for some reason, without this flag which functions as a lock, the connection scrtipt happens reapetedly*/
+ var user_id;
+ var recent_tracks;
+ var flag = ""; /*for some reason, with out this flag which functions as a lock, the connection scrtipt happens reapetedly*/
  var participents = [];
  var games_arr = []; /*contains for each games: who answered for current round*/
  var games_num = 0;
@@ -73,7 +75,7 @@
       curr_access_token = url.parse(req.url,true).query.access_token;
       curr_access_token = url.parse(req.url,true).query.refresh_token;
       
-      res.redirect("/Game_page#access_token="+access_token);
+      res.redirect("/Game?access_token="+access_token+"&refresh_token="+refresh_token);
     });
     const http = require('http');
     const server = http.createServer(app2);
@@ -84,7 +86,7 @@
       console.log('listening on *:3000');
     });
 
-    app2.use('/Game_page', express.static(__dirname+'/public/Game.html'))
+    app2.use('/Game', express.static(__dirname+'/public/Game.html'))
     .use(cors())
     .use(cookieParser());
 
@@ -166,7 +168,7 @@ app.get('/song_render',function(req,res) /*gets a random position in the recentl
   let curr_access_token = req.query.access_token;
   var songID =" ";
   var songname;
-  var popolarity;
+  var popularity;
   var image_url;
   var options = {
     url: 'https://api.spotify.com/v1/me/player/recently-played',
@@ -179,7 +181,7 @@ app.get('/song_render',function(req,res) /*gets a random position in the recentl
     songID = body.items[pos].track.id;
     /*console.log(songID);*/
     songname = body.items[pos].track.name;
-    popolarity = body.items[pos].track.popolarity;
+    popularity = body.items[pos].track.popularity;
     options = {
       url: 'https://api.spotify.com/v1/tracks/'+songID,
       headers: { 'Authorization': 'Bearer ' + curr_access_token },
@@ -188,17 +190,30 @@ app.get('/song_render',function(req,res) /*gets a random position in the recentl
     request.get(options, function(error, response, body) {
       console.log('https://api.spotify.com/v1/tracks/'+songID);
       image_url = body.album.images[1].url;
-      res.send({image_url:image_url, songname: songname, songID: songID, popolarity: popolarity})
+      res.send({image_url:image_url, songname: songname, songID: songID, popularity: popularity})
     });
   });
 
 })    
+async function req_func(curr_access_token)
+{
+  let recent_tracks;
+  options = 
+         {
+          url: 'https://api.spotify.com/v1/me/player/recently-played',
+          headers: { 'Authorization': 'Bearer ' + curr_access_token },
+          json: true
+         };
+
+    request.get(options, function(error, response, body) {
+      recent_tracks = body;
+    });
+    return recent_tracks;
+}
 
 app.get('/Game', (req, res) => {
-    var curr_access_token = req.access_token;
-    var curr_refresh_token = req.refresh_token;
-    var user_id;
-    var recent_tracks;
+    var curr_access_token = url.parse(req.url,true).query.access_token;
+    var curr_refresh_token = url.parse(req.url,true).query.refresh_token;
 
     var options = {
       url: 'https://api.spotify.com/v1/me',
@@ -209,25 +224,28 @@ app.get('/Game', (req, res) => {
     // use the access token to access the Spotify Web API
     request.get(options, function(error, response, body) {
      user_id = body.id;
+     console.log(user_id);
     });
 
     options = 
          {
           url: 'https://api.spotify.com/v1/me/player/recently-played',
-          headers: { 'Authorization': 'Bearer ' + access_token },
+          headers: { 'Authorization': 'Bearer ' + curr_access_token },
           json: true
          };
 
     request.get(options, function(error, response, body) {
       recent_tracks = body;
+      // console.log(body.items[0].track.name);
     });
+    
 
     io.on('connection', (socket) => {
       if(flag != socket.id)
       {
         socket.on("answered", function(data)
         {
-          console.log("answering");
+          // console.log("answering");
           games_arr[data.game_id-1].answers[data.user -1] = 1;
           /*identify who send it, change answers array and if necessary emit NextRound*/
           if(games_arr[data.game_id-1].answers[0] == 1 && games_arr[data.game_id-1].answers[1] == 1)
@@ -235,7 +253,7 @@ app.get('/Game', (req, res) => {
           games_arr[data.game_id-1].answers[0] = 0;
           games_arr[data.game_id-1].answers[1] = 0;
           io.to(data.game_id).emit("NextRound");
-          console.log("Thnaks God");
+          // console.log("Thnaks God");
           }
         });
         socket.on("EndGame",function(data) /*Handle tie case*/
@@ -259,10 +277,12 @@ app.get('/Game', (req, res) => {
           }
         })
         flag = socket.id;
-        console.log(socket.id);
-        console.log("Connected");
+        // console.log(socket.id);
+        if(recent_tracks != undefined)
+        {console.log(recent_tracks.items[0].track.name);}
+        // console.log("Connected");
         participents.push({user_id: user_id, recent_tracks: recent_tracks});
-        console.log(participents.length);
+        // console.log(participents.length);
         if(participents.length == 1)
         {io.emit('IdentifyUser',1); /*need to emit to specific room?*/
         games_num += 1;
@@ -274,11 +294,12 @@ app.get('/Game', (req, res) => {
         if(participents.length >= 2)
         {
           io.to(games_num).emit('IdentifyUser',2); /*second user will go here, first user will stay with id =1?*/
-          console.log("Here");
-          console.log(socket.id);
+          // console.log("Here");
+          // console.log(socket.id);
           user_1 = participents.pop();
           user_2 = participents.pop();
-          console.log(participents.length);
+          // console.log(participents.length);
+         //console.log(user_2.recent_tracks)
           io.to(games_num).emit('InitGame', {user_1:user_1.recent_tracks, user_2: user_2.recent_tracks, game_id: games_num});
           /*FIX! NEED TO FLUSH AGAIN AND AGIN TILL THERE IS 0/1 PARTICIPENTS IN THE ARRAY!!!!!!!!*/
         }
@@ -360,7 +381,7 @@ app.get('/Game', (req, res) => {
        }
      )
    })
- })
+ });
 
  app.get("/get/superusers", function(req,res)
  {
@@ -372,18 +393,26 @@ app.get('/Game', (req, res) => {
        }
      )
    })
- })
+ });
 
- app.get("/add/word",function(req,res)
+ app.get("/word",function(req,res)
  {
+   console.log('starting\n');
    let userID = req.query.userID;
    let songID = req.query.songID;
    let username = req.query.username;
    let name = req.query.name;
    let views = req.query.views;
    let word = req.query.word;
+   console.log(userID);
+   console.log(songID);
+   console.log(username); //
+   console.log(name);
+   console.log(views); //
+   console.log(word);
    funcs.add_word(userID, username, songID, name, views, word);
- })
+   console.log('done\n');
+ });
 
  app.get("/choose/word",function(req,res)
  {
@@ -391,7 +420,7 @@ app.get('/Game', (req, res) => {
    let songID = req.query.songID;
    let word = req.query.word;
    funcs.add_word(userID,songID,word);
- })
+ });
 
  exports.ret_io = function (){return io};
  console.log('Listening on 8888');

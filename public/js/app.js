@@ -57,11 +57,11 @@ function makeColumns(cellNum) {
             var access_token = params.access_token;
             var refresh_token = params.refresh_token;
             let newCell = document.createElement("a");
-             newCell.setAttribute("href", "/Query#access_token="+access_token+
-             "&refresh_token="+refresh_token);
+            //  newCell.setAttribute("href", "/Query#access_token="+access_token+
+            //  "&refresh_token="+refresh_token);
 
-            // newCell.setAttribute("href","/Game?access_token="+access_token+"&refresh_token="+refresh_token);
-            // newCell.style.cursor = "default";
+            newCell.setAttribute("href","/Game?access_token="+access_token+"&refresh_token="+refresh_token);
+            newCell.style.cursor = "default";
             const randomColor = Math.floor(Math.random()*16777215).toString(16);
             while (randomColor == 000000) {
                 const randomColor = Math.floor(Math.random()*16777215).toString(16);

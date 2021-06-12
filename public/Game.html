@@ -39,7 +39,7 @@
     document.getElementById("GameScreen").style.display = "none";
     document.getElementById("End").style.display = "none";
     </script>
-    <script type = "text/javascript" src = "js/game_manager.js"></script>  
+    <script type = "text/javascript" src = "js/fixundef.js"></script>  
     <script  type="text/javascript" src="/socket.io/socket.io.js"></script>
     <script> 
     function getHashParams() {
@@ -73,8 +73,7 @@
     {
       if(lock_user_id == 0){
         document.getElementById("userid").innerHTML = socket.id;
-        document.getElementById("User").value = data;
-        
+        document.getElementById("User").value = data; 
         lock_user_id = 1;
       }
     })
@@ -90,10 +89,24 @@
         game_id = data.game_id;
         document.getElementById("userid").innerHTML = data.game_id;
         player.innerHTML = data.user_1.items[i].track.name;
-        option1.innerHTML = "data.user_1"; /*should be word from the data base*/
-        option2.innerHTML = "data.user_2"; /*should be word from the data base*/
-        option1.value = 1; /*should be rank of the word from DB*/
-        option2.value = 1; /*should be rank of the word from DB*/
+        let words;
+        // $.ajax({
+        //             url: '\get\offers',
+        //             data: {
+        //               songID: data.user_1.items[i].id,
+        //               name: data.user_1.items[i].id,
+        //               views: data.user_1.items[i].popularity
+        //             },
+        //             success: function(response) {
+        //               words = response.words;
+        //             }
+        // })
+        // option1.innerHTML = words[0]; 
+        // option2.innerHTML = words[1];
+        option1.innerHTML = "data1";
+        option2.innerHTML = "data2";
+        option1.value = 1; 
+        option2.value = 1; 
         
         option2.addEventListener('click', function()
         {
@@ -143,19 +156,52 @@
     {
       i += 1;
       flag = 0;
-      if(i % 2 == 0)
+      if(i % 2 == 0 || user_2_tracks == undefined)
       {
         document.getElementById("name").innerHTML = user_1_tracks.items[i].track.name;
-        option1.innerHTML = "data.user_1"; /*should be word from the data base*/
-        option2.innerHTML = "data.user_2"; /*should be word from the data base*/
+        let words;
+        // $.ajax({
+        //             url: '\get\offers',
+        //             data: {
+        //               songID: data.user_1.items[i].id,
+        //               name: data.user_1.items[i].id,
+        //               views: data.user_1.items[i].popularity
+        //             },
+        //             success: function(response) {
+        //               words = response.words;
+        //             }
+        // })
+        // option1.innerHTML = words[0]; 
+        // option2.innerHTML = words[1]; 
+        option1.innerHTML = "data1";
+        option2.innerHTML = "data2";
+        option1.value = 1;
+        option2.value = 1;
       }
-      if(i % 2 == 1)
+      if(i % 2 == 1 && user_2_tracks != undefined)
       {
+        
         document.getElementById("name").innerHTML = user_2_tracks.items[i].track.name;
-        option1.innerHTML = "data.user_3"; /*should be word from the data base*/
-        option2.innerHTML = "data.user_4"; /*should be word from the data base*/
+        let words;
+        // $.ajax({
+        //             url: '\get\offers',
+        //             data: {
+        //               songID: data.user_2.items[i].id,
+        //               name: data.user_2.items[i].id,
+        //               views: data.user_2.items[i].popularity
+        //             },
+        //             success: function(response) {
+        //               words = response.words;
+        //             }
+        // })
+        // option1.innerHTML = words[0]; 
+        // option2.innerHTML = words[1]; 
+        option1.innerHTML = "data1";
+        option2.innerHTML = "data2";
+        option1.value = 1;
+        option2.value = 1;
       }
-      if(i == 2)
+      if(i == 4)
       {
         if(document.getElementById("User").value == 1)
         {
