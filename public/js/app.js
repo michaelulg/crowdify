@@ -107,6 +107,13 @@ function showsearch() {
     window.location.href = "search?" + search;
 }
 
+function getSearchTerm() {
+    var elem = document.getElementById("search-head");
+    elem.insertAdjacentHTML('beforeend', '<h7>'+location.search.substring(1)+'</h7>')
+
+    alert('success');
+}
+
   
 
 // defaultGrid();
