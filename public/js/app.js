@@ -108,20 +108,20 @@ function showsearch() {
     var search = document.getElementById("search_term").value;
     var params = getHashParams();
     access_token = params.access_token;
-    window.location.href = "search?" + search + "&access_token="+access_token;
-    alert(search);
+    window.location.href = "search?" + search + "#access_token="+access_token;
 }
 
 function getSearchTerm() {
     var elem = document.getElementById("search-head");
-    elem.insertAdjacentHTML('beforeend', '<h7>'+decodeURI(location.search.substring(1))+'</h7>')
+    elem.insertAdjacentHTML('beforeend', '<h7>'+decodeURI(location.search.substring(1)).split('&')[0]+'</h7><br>')
+    alert(decodeURI(location.search.substring(1)).split('#')[0]);
 }
 
-function generateSongList() {
+async function generateSongList() {
     var elem = document.getElementById("search-head");
 
-    let song_ids = ["4O0LQKVT6hGmVGNwizmydg", "7mEDVrAHDnQJStDo8jKJJm", "1ISMa0THMDKFBq2UMfm02e", "63Wv3KNxCfnuUIW988TyIl", "2iRniYXjMHKmwXqA2jYXP7"];
-    let string = decodeURI(location.search.substring(1));
+    let song_ids = ["7mEDVrAHDnQJStDo8jKJJm", "7mEDVrAHDnQJStDo8jKJJm", "1ISMa0THMDKFBq2UMfm02e", "63Wv3KNxCfnuUIW988TyIl", "2iRniYXjMHKmwXqA2jYXP7", "2iRniYXjMHKmwXqA2jYXP7"];
+    let string = decodeURI(location.search.substring(1)).split('&')[0];
     /*$.ajax({
         url: '\search',
         data: {
@@ -139,13 +139,18 @@ function generateSongList() {
     let image_url;
     let artist;
     let song_url;
+    
 
     for (let i = 0; i < songs.length; i++) {
         let songID = song_ids[i];
+        var params = getHashParams();
+        var access_token = params.access_token;
+        alert(i)
         $.ajax({
             url: '\get_track_name',
             data: {
-                songID : songID
+                songID : songID,
+                access_token : access_token
             }, 
             success: function(response) {
                 songname = response.songname;
@@ -153,11 +158,27 @@ function generateSongList() {
                 artist = response.artist;
                 song_url = response.song_url;
             }
-        })
+        });
         songs[i] = {songname : songname, artist : artist, image_url : image_url, song_url : song_url};
-        elem.insertAdjacentHTML('beforeend', '<h7>'+songname+'</h7><br>');
+        if(i != 0) {
+            elem.insertAdjacentHTML('beforeend', '<h7>'+songname+'</h7><br>');
+        }
     }
 }
 
-
+function gedData(songID, access_token) {
+    return $.ajax({
+        url: '\get_track_name',
+        data: {
+            songID : songID,
+            access_token : access_token
+        }, 
+        success: function(response) {
+            songname = response.songname;
+            image_url = response.image_url;
+            artist = response.artist;
+            song_url = response.song_url;
+        }
+    });
+};
 // defaultGrid();

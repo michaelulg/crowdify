@@ -189,6 +189,8 @@ app.get('/song_render',function(req,res) /*gets a random position in the recentl
 
   // use the access token to access the Spotify Web API
   request.get(options, function(error, response, body) {
+    console.log("body:")
+    console.log(body);
     songID = body.items[pos].track.id;
     /*console.log(songID);*/
     songname = body.items[pos].track.name;
@@ -397,7 +399,8 @@ app.get('/Game', (req, res) => {
 
  app.get("/get_track_name",function(req,res)
  {
-  var curr_access_token = url.parse(req.url,true).query.access_token;
+  var curr_access_token = req.query.access_token;
+  console.log(curr_access_token);
   var songID = req.query.songID;
   var songname;
   var popularity;
