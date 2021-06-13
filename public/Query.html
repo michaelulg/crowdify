@@ -44,28 +44,28 @@
             <div class="navbar-collapse offcanvas-collapse" id="navbarsExampleDefault">
                 <ul class="navbar-nav ml-auto">
                     <li class="nav-item">
-                        <a class="nav-link page-scroll" href="article.html">About<span class="sr-only">(current)</span></a>
+                        <a class="nav-link page-scroll" href="article.html">Article <span class="sr-only">(current)</span></a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link page-scroll" href="features.html">Query</a>
+                        <a class="nav-link page-scroll" href="features.html">Features</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link page-scroll" href="pricing.html">Game</a>
+                        <a class="nav-link page-scroll" href="pricing.html">Pricing</a>
                     </li>
-                    <!--<li class="nav-item dropdown">
+                    <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="dropdown01" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Drop</a>
                         <div class="dropdown-menu" aria-labelledby="dropdown01">
                             <a class="dropdown-item page-scroll" href="terms.html">Terms Conditions</a>
                             <div class="dropdown-divider"></div>
                             <a class="dropdown-item page-scroll" href="privacy.html">Privacy Policy</a>
                         </div>
-                    </li>-->
+                    </li>
                     <li class="nav-item">
                         <a class="nav-link page-scroll" href="contact.html">Contact</a>
                     </li>
                 </ul>
                 <span class="nav-item">
-                    <a class="btn-outline-sm page-scroll" href="#download">Home</a>
+                    <a class="btn-outline-sm page-scroll" href="#download">Download</a>
                 </span>
             </div> <!-- end of navbar-collapse -->
         </div> <!-- end of container -->
@@ -422,7 +422,7 @@
                   popularity = response.popularity;
                   name = response.songname;
                   let words;
-                  //var words = get_offers(songID);
+                  //var words = get_offers(songID); 
 
                   $.ajax({
                     url: '\get_offers',
@@ -432,30 +432,71 @@
                       views: popularity 
                     },
 
-                    //async: false,
+                    async: false,
 
                     success: function(response) {
                       words = response.words;
                     }
-                  })
+                  });
 
-                  var options = {option_1:"TRYING", option_2: "TRYING", option_3: "TRYING", image_url: response.image_url};
-                  var users = {user_1: "Trying", user_2: "Trying", user_3: "Trying"};
+                  var super_users;
+                  alert('im js and im not working');
+
+                  $.ajax({
+                    url: '\get_superusers',
+                    // data: {
+                    //},
+
+                    async: false,
+
+                    success: function(response) {
+                      super_users = response.super_users;
+                    }
+                  });
+
+                  alert(super_users[0]['username']);
+                  alert(super_users[0]['score']);
+
+                  //var options = {option_1:"TRYING", option_2: "TRYING", option_3: "TRYING", image_url: response.image_url};
+                  var users = {user_1: super_users[0]['username'], user_2: super_users[1]['username'], user_3: "none"};
                   
-                  optionsPlaceholder.innerHTML = optionsTemplate(options); /*render options*/
+                  //optionsPlaceholder.innerHTML = optionsTemplate(options); /*render options*/
                   superusersPlaceholder.innerHTML = superusersTemplate(users);
                 
-                  if(word.length >=3)
-                  {
-                  options = {option_1: words[0], option_2: words[1], option_3: words[2]}
+                  //if(word.length >=3)
+                  //{
+                  //alert(words[0]); 
+                  //var options = {option_1: words[0], option_2: "TRYING", option_3: "TRYING", image_url: response.image_url};
+                  //optionsPlaceholder.innerHTML = optionsTemplate(options); /*render options*/
+                  //}
+
+                  var len = words.lenght;
+                  if(len == 0){
+                    var options = {option_1: "-", option_2: "-", option_3: "-", image_url: response.image_url};
+                    document.getElementById("option_1").style.display = "none";
+                    document.getElementById("option_2").style.display = "none";
+                    document.getElementById("option_3").style.display = "none";
+                  }
+                  if(len == 1){
+                    var options = {option_1: words[0], option_2: "-", option_3: "-", image_url: response.image_url};
+                    document.getElementById("option_2").style.display = "none";
+                    document.getElementById("option_3").style.display = "none";
+                  }
+                  if(len == 2){
+                    var options = {option_1: words[0], option_2: words[1], option_3: "-", image_url: response.image_url};
+                    document.getElementById("option_3").style.display = "none";
+                  }
+                  else{
+                    var options = {option_1: words[0], option_2: words[1], option_3: words[2], image_url: response.image_url};
+                  }
+
                   optionsPlaceholder.innerHTML = optionsTemplate(options); /*render options*/
-                  }
                   
-                  else
-                  {
-                    document.getElementById("options").style.display = "none";
-                    /*hide options*/
-                  }
+                  //else
+                  //{
+                  //document.getElementById("options").style.display = "none";
+                  /*hide options*/
+                  //}
                   
                   var users_arr = get_super_users(); /*need to render top 3 on the screen- Grabois
                   problem is that we keep id's and not name*/
@@ -473,15 +514,70 @@
                 },
                 async: false,
                 success: function(response) {
+                  userProfilePlaceholder.innerHTML = userProfileTemplate(response);
                   songID = response.songID;
                   popularity = response.popularity;
                   name = response.songname;
-                  /*var myrand = Math.floor((Math.random()*10 + 1));*/
-                  /*var url = get_image_url("");
-                  var name = {image_url:'https://i.scdn.co/image/ab67616d00001e02a6a335d613d151c626895a83',track:{name:response.items[myrand].track.name},}; */
-                  /*var image_url = get_image_url(items.id);*/
-                  userProfilePlaceholder.innerHTML = userProfileTemplate(response);
+                  let words;
+                  //var words = get_offers(songID);
 
+                  $.ajax({
+                    url: '\get_offers',
+                    data: {
+                      songID: songID,
+                      name: name,
+                      views: popularity 
+                    },
+
+                    async: false,
+
+                    success: function(response) {
+                      words = response.words;
+                    }
+                  });
+
+                  //var options = {option_1:"TRYING", option_2: "TRYING", option_3: "TRYING", image_url: response.image_url};
+                  var users = {user_1: "Trying", user_2: "Trying", user_3: "Trying"};
+                  
+                  //optionsPlaceholder.innerHTML = optionsTemplate(options); /*render options*/
+                  //superusersPlaceholder.innerHTML = superusersTemplate(users);
+                
+                  //if(word.length >=3)
+                  //{
+                  //alert(words[0]); 
+                  //var options = {option_1: words[0], option_2: "TRYING", option_3: "TRYING", image_url: response.image_url};
+                  //}
+
+                  var len = words.lenght;
+                  if(len == 0){
+                    var options = {option_1: "-", option_2: "-", option_3: "-", image_url: response.image_url};
+                    document.getElementById('option_1').style.display = "none";
+                    document.getElementById("option_2").style.display = "none";
+                    document.getElementById("option_3").style.display = "none";
+                  }
+                  if(len == 1){
+                    var options = {option_1: words[0], option_2: "-", option_3: "-", image_url: response.image_url};
+                    document.getElementById("option_2").style.display = "none";
+                    document.getElementById("option_3").style.display = "none";
+                  }
+                  if(len == 2){
+                    var options = {option_1: words[0], option_2: words[1], option_3: "-", image_url: response.image_url};
+                    document.getElementById("option_3").style.display = "none";
+                  }
+                  else{
+                    var options = {option_1: words[0], option_2: words[1], option_3: words[2], image_url: response.image_url};
+                  }
+
+                  optionsPlaceholder.innerHTML = optionsTemplate(options); /*render options*/
+                  
+                  //else
+                  //{
+                  //document.getElementById("options").style.display = "none";
+                  /*hide options*/
+                  //}
+                  
+                  var users_arr = get_super_users(); /*need to render top 3 on the screen- Grabois
+                  problem is that we keep id's and not name*/
                   $('#login').hide();
                   $('#loggedin').show();
                 }

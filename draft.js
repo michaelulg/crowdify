@@ -185,7 +185,7 @@ app.get('/get_images_list',function(req,res){
     {
       urls.push(songs[i].track.album.images[0].url)
     }
-    res.send({urls: urls});
+    res.send(urls);
   })
 })
 
@@ -198,7 +198,7 @@ app.get('/song_render',function(req,res) /*gets a random position in the recentl
   let curr_access_token = req.query.access_token;
   var songID =" ";
   var songname;
-  var popolarity;
+  var popularity;
   var image_url;
   var options = {
     url: 'https://api.spotify.com/v1/me/player/recently-played',
@@ -213,7 +213,7 @@ app.get('/song_render',function(req,res) /*gets a random position in the recentl
     songID = body.items[pos].track.id;
     /*console.log(songID);*/
     songname = body.items[pos].track.name;
-    popolarity = body.items[pos].track.popolarity;
+    popularity = body.items[pos].track.popularity;
     options = {
       url: 'https://api.spotify.com/v1/tracks/'+songID,
       headers: { 'Authorization': 'Bearer ' + curr_access_token },
@@ -222,7 +222,7 @@ app.get('/song_render',function(req,res) /*gets a random position in the recentl
     request.get(options, function(error, response, body) {
       console.log('https://api.spotify.com/v1/tracks/'+songID);
       image_url = body.album.images[1].url;
-      res.send({image_url:image_url, songname: songname, songID: songID, popolarity: popolarity})
+      res.send({image_url:image_url, songname: songname, songID: songID, popularity: popularity})
     });
   });
 
@@ -518,9 +518,10 @@ app.get("/get_track_name",function(req,res)
 });
 
 
- app2.get("/get/superusers", function(req,res)
+ app2.get("/get_superusers", function(req,res)
  {
-   funcs.get_super_users().then(function(result)
+  console.log('inside get_superusers in app2');
+   funcs.get_superusers().then(function(result)
    {
      res.send(
        {
@@ -530,9 +531,10 @@ app.get("/get_track_name",function(req,res)
    })
  })
 
- app.get("/get/superusers", function(req,res)
+ app.get("/get_superusers", function(req,res)
  {
-   funcs.get_super_users().then(function(result)
+   console.log('inside get_superusers in app');
+   funcs.get_superusers().then(function(result)
    {
      res.send(
        {
