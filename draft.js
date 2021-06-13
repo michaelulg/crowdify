@@ -210,6 +210,8 @@ app.get('/song_render',function(req,res) /*gets a random position in the recentl
 })    
 
 
+
+
 app.get('/Game', (req, res) => {
     var curr_access_token = req.access_token;
     var curr_refresh_token = req.refresh_token;
@@ -383,7 +385,6 @@ app.get('/Game', (req, res) => {
    })
  });
 
-
  app2.get("/get_offers", function(req,res)
  {
    console.log('inside get_offers');
@@ -400,6 +401,7 @@ app.get('/Game', (req, res) => {
    })
  });
 
+
  app.get("/search", function(req,res)
  {
    let string = req.query.string;
@@ -415,6 +417,7 @@ app.get('/Game', (req, res) => {
 
 app2.get("/getsongdata",function(req,res)
 {
+
   var curr_access_token = req.query.access_token;
   console.log(curr_access_token);
   var songID = req.query.songID;
@@ -438,6 +441,35 @@ app2.get("/getsongdata",function(req,res)
     res.send({"image_url":image_url, "songname": songname, "popularity": popularity, "artist": artist, "song_url": song_url})
   });
 });
+
+app.get("/get_track_name",function(req,res)
+{
+
+  var curr_access_token = req.query.access_token;
+  console.log(curr_access_token);
+  var songID = req.query.songID;
+  var songname;
+  var popularity;
+  var image_url;
+  var artist;
+  var song_url;
+  var options = {
+    url: 'https://api.spotify.com/v1/tracks/'+songID,
+    headers: { 'Authorization': 'Bearer ' + curr_access_token },
+    json: true
+  };
+  request.get(options, function(error, response, body) {
+    // console.log('https://api.spotify.com/v1/tracks/'+songID);
+    console.log(body);
+    image_url = body.album.images[1].url;
+    songname = body.name; 
+    popularity = body.popularity; 
+    artist = body.album.artists[0].name;
+    song_url = body.uri;
+    res.send({"image_url":image_url, "songname": songname, "popularity": popularity, "artist": artist, "song_url": song_url})
+  });
+});
+
 
 app.get("/get_track_name",function(req,res)
 {
@@ -465,6 +497,7 @@ app.get("/get_track_name",function(req,res)
     res.send({"image_url":image_url, "songname": songname, "popularity": popularity, "artist": artist, "song_url": song_url})
   });
 });
+
 
  app2.get("/get/superusers", function(req,res)
  {
@@ -545,6 +578,9 @@ app.get("/get_track_name",function(req,res)
 
 app2.get("/get_weight", function(req,res)
 {
+
+  let weight;
+
   let word = req.query.word;
   let songID = req.query.songID;
   funcs.get_weight(songID,word).then(function(result)

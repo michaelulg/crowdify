@@ -123,7 +123,9 @@
         $.ajax({
           url: '\getsongdata',
           data: {
+
             songID: user_1_tracks[i],
+
             access_token: access_token
           },
           async: false,
@@ -135,7 +137,9 @@
         });
         
         Title.innerHTML = songname;
-        //alert(songname);
+
+        alert(songname);
+
         let words;
         //alert(user_1_tracks);
         $.ajax({
@@ -235,6 +239,7 @@
       {
         //alert(user_1_tracks[i]);
         $.ajax({
+
             url: '\getsongdata',
             data: {
               songID: user_1_tracks[i],
@@ -247,6 +252,7 @@
               }
         });
         Title.innerHTML = songname;
+
 
         $.ajax({
                     url: '\get_offers',
@@ -272,7 +278,9 @@
                       songID: user_1_tracks[i],
                       word: option1.innerHTML
                      },
+
                      //async: false,
+
                      success: function(response) {
                        option1.value = response
                      }
