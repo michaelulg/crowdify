@@ -285,7 +285,6 @@ app.get('/Game', (req, res) => {
         // console.log(participents.length);
         console.log(socket.id);
         console.log("Connected");
-        participents.push({user_id: user_id, recent_tracks: recent_tracks});
         console.log(participents.length);
         if(participents.length == 1)
         {io.emit('IdentifyUser',1); /*need to emit to specific room?*/
@@ -384,7 +383,7 @@ app.get('/Game', (req, res) => {
        }
      )
    })
- })
+ });
 
  app.get("/search", function(req,res)
  {
@@ -399,8 +398,8 @@ app.get('/Game', (req, res) => {
    })
  });
 
- app.get("/get_track_name",function(req,res)
- {
+app2.get("/getsongdata",function(req,res)
+{
   var curr_access_token = req.query.access_token;
   console.log(curr_access_token);
   var songID = req.query.songID;
@@ -416,13 +415,53 @@ app.get('/Game', (req, res) => {
   };
   request.get(options, function(error, response, body) {
     // console.log('https://api.spotify.com/v1/tracks/'+songID);
+    console.log(body);
     image_url = body.album.images[1].url;
     songname = body.name; 
     popularity = body.popularity; 
     artist = body.album.artists[0].name;
     song_url = body.uri;
-    res.send({image_url:image_url, songname: songname, popularity: popularity, artist: artist, song_url: song_url})
+    res.send({"image_url":image_url, "songname": songname, "popularity": popularity, "artist": artist, "song_url": song_url})
   });
+});
+
+app.get("/get_track_name",function(req,res)
+{
+  var curr_access_token = req.query.access_token;
+  console.log(curr_access_token);
+  var songID = req.query.songID;
+  var songname;
+  var popularity;
+  var image_url;
+  var artist;
+  var song_url;
+  var options = {
+    url: 'https://api.spotify.com/v1/tracks/'+songID,
+    headers: { 'Authorization': 'Bearer ' + curr_access_token },
+    json: true
+  };
+  request.get(options, function(error, response, body) {
+    // console.log('https://api.spotify.com/v1/tracks/'+songID);
+    console.log(body);
+    image_url = body.album.images[1].url;
+    songname = body.name; 
+    popularity = body.popularity; 
+    artist = body.album.artists[0].name;
+    song_url = body.uri;
+    res.send({"image_url":image_url, "songname": songname, "popularity": popularity, "artist": artist, "song_url": song_url})
+  });
+});
+
+ app2.get("/get/superusers", function(req,res)
+ {
+   funcs.get_super_users().then(function(result)
+   {
+     res.send(
+       {
+         super_users: result
+       }
+     )
+   })
  })
 
  app.get("/get/superusers", function(req,res)
@@ -448,6 +487,17 @@ app.get('/Game', (req, res) => {
    funcs.add_word(userID, username, songID, name, views, word);
  })
 
+ app2.get("/add/word",function(req,res)
+ {
+   let userID = req.query.userID;
+   let songID = req.query.songID;
+   let username = req.query.username;
+   let name = req.query.name;
+   let views = req.query.views;
+   let word = req.query.word;
+   funcs.add_word(userID, username, songID, name, views, word);
+ })
+
  app.get("/choose/word",function(req,res)
  {
    let userID = req.query.userID;
@@ -456,7 +506,30 @@ app.get('/Game', (req, res) => {
    funcs.add_word(userID,songID,word);
  })
 
+ app2.get("/choose/word",function(req,res)
+ {
+   let userID = req.query.userID;
+   let songID = req.query.songID;
+   let word = req.query.word;
+   funcs.add_word(userID,songID,word);
+ })
+
  app.get("/get_weight", function(req,res)
+{
+  let weight;
+  let word = req.query.word;
+  let songID = req.query.songID;
+  funcs.get_weight(songID,word).then(function(result)
+   {
+     res.send(
+       {
+         weight: result
+       }
+     )
+   })
+});
+
+app2.get("/get_weight", function(req,res)
 {
   let weight;
   let word = req.query.word;
