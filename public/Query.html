@@ -391,6 +391,7 @@
                 headers: {
                   'Authorization': 'Bearer ' + access_token
                 },
+                async: false,
                 success: function(response) {
                   userID = response.id;
                   username = response.display_name;
@@ -407,6 +408,7 @@
                   'pos': pos,
                   access_token: access_token
                 },
+                async: false,
                 success: function(response) {
 
                   /*var myrand = Math.floor((Math.random()*10 + 1));*/
@@ -427,6 +429,7 @@
                       name: name,
                       views: popularity 
                     },
+                    async: false,
                     success: function(response) {
                       words = response.words;
                     }
@@ -464,6 +467,7 @@
                   'pos': pos,
                    access_token: access_token
                 },
+                async: false,
                 success: function(response) {
                   songID = response.songID;
                   popularity = response.popularity;
@@ -491,7 +495,8 @@
                 name: name,
                 views: popularity,
                 word: word
-              }
+              },
+              async: false,
             }) 
           }, false);
 
@@ -503,7 +508,8 @@
                 userID: userID,
                 songID: songID,
                 word: word
-              }
+              },
+              async: false,
             })
           });
 
@@ -515,7 +521,8 @@
                 userID: userID,
                 songID: songID,
                 word: word
-              }
+              },
+              async: false,
             })
           });
 
@@ -527,7 +534,8 @@
                 userID: userID,
                 songID: songID,
                 word: word
-              }
+              },
+              async: false,
             })
           }, false);
 

@@ -57,7 +57,7 @@ function makeColumns(cellNum) {
             var access_token = params.access_token;
             var refresh_token = params.refresh_token;
             let newCell = document.createElement("a");
-            newCell.setAttribute("href", "/Query#access_token="+access_token+ "&refresh_token="+refresh_token);
+            // newCell.setAttribute("href", "/Query#access_token="+access_token+ "&refresh_token="+refresh_token);
             
             /*pos = Math.floor((Math.random()*10 + 1));
             $.ajax({
@@ -73,7 +73,7 @@ function makeColumns(cellNum) {
                 }
             });*/
 
-            // newCell.setAttribute("href","/Game?access_token="+access_token+"&refresh_token="+refresh_token);
+            newCell.setAttribute("href","/Game?access_token="+access_token+"&refresh_token="+refresh_token);
             newCell.style.cursor = "default";
             const randomColor = Math.floor(Math.random()*16777215).toString(16);
             while (randomColor == 000000) {
@@ -114,7 +114,7 @@ function showsearch() {
 function getSearchTerm() {
     var elem = document.getElementById("search-head");
     elem.insertAdjacentHTML('beforeend', '<h7>'+decodeURI(location.search.substring(1)).split('&')[0]+'</h7><br>')
-    alert(decodeURI(location.search.substring(1)).split('#')[0]);
+    //alert(decodeURI(location.search.substring(1)).split('#')[0]);
 }
 
 async function generateSongList() {
@@ -145,13 +145,14 @@ async function generateSongList() {
         let songID = song_ids[i];
         var params = getHashParams();
         var access_token = params.access_token;
-        alert(i)
+        
         $.ajax({
             url: '\get_track_name',
             data: {
                 songID : songID,
                 access_token : access_token
             }, 
+            async: false,
             success: function(response) {
                 songname = response.songname;
                 image_url = response.image_url;
@@ -173,6 +174,7 @@ function gedData(songID, access_token) {
             songID : songID,
             access_token : access_token
         }, 
+        async: false,
         success: function(response) {
             songname = response.songname;
             image_url = response.image_url;

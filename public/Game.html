@@ -25,6 +25,8 @@
     <!-- Favicon  -->
     <link rel="icon" href="images/logo_circle.png">
     <script src="https://kit.fontawesome.com/6f246cdb03.js" crossorigin="anonymous"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/handlebars.js/2.0.0-alpha.1/handlebars.min.js"></script>
+    <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
 
   </head>
 
@@ -48,7 +50,7 @@
         <button class="btn btn-default" id="userid" value = 1>{userid}</button>
       </div>
       <div id = "song">
-          <dt>Song: </dt><dd class="text-overflow" id = "name">{{name}}</dd>
+          <dt>Song: </dt><dd class="text-overflow" id = "name">{name}</dd>
       </div>
       <button class="btn btn-default" id="option1" value = 1>{option1}</button>
       <br>
@@ -56,14 +58,14 @@
     </div>
     <div id = "End">
       Oh No! This is the end of the game. everything good comes to an end...
-      <dt>You: </dt><dd class="text-overflow" id = "state">{{state}}</dd>
+      <dt>You: </dt><dd class="text-overflow" id = "state">{state}</dd>
     </div>
     <script>
     document.getElementById("WaitingRoom").style.display = "block";
     document.getElementById("GameScreen").style.display = "none";
     document.getElementById("End").style.display = "none";
     </script>
-    <script type = "text/javascript" src = "js/fixundef.js"></script>  
+
     <script  type="text/javascript" src="/socket.io/socket.io.js"></script>
     <script> 
     function getHashParams() {
@@ -87,7 +89,7 @@
     answers = [0,0]; /*who answered? two flags*/
     var option1 =  document.getElementById("option1");
     var option2 =  document.getElementById("option2");
-    var name =  document.getElementById("name");
+    var Title =  document.getElementById("name");
     let i = 0;
     let flag;
     let game_id = 0;
@@ -95,6 +97,7 @@
     
     socket.on('IdentifyUser', function(data)
     {
+      
       if(lock_user_id == 0){
         document.getElementById("userid").innerHTML = socket.id;
         document.getElementById("User").value = data; 
@@ -103,6 +106,7 @@
     })
     socket.on('InitGame', function(data)
     {
+      
       document.getElementById("WaitingRoom").style.display = "none";
       document.getElementById("GameScreen").style.display = "block";
       document.getElementById("End").style.display = "none";
@@ -114,18 +118,24 @@
         document.getElementById("userid").innerHTML = data.game_id;
         let songname;
         let popularity;
+        
+        
         $.ajax({
-                    url: '\get_track_name',
-                    data: {
-                      songID: user_1_tracks[i],
-                     },
-                     success: function(response) {
-                       songname = response.songname;
-                       popularity = response.popularity;
-                     }
-        })
-
-        name.innerHTML = songname;
+          url: '\getsongdata',
+          data: {
+            songID: "7mEDVrAHDnQJStDo8jKJJm",
+            access_token: access_token
+          },
+          async: false,
+          success: function(response) {
+            //alert(response["songname"]);
+            songname = response["songname"];
+            popularity = response["popularity"];
+          }
+        });
+        
+        Title.innerHTML = songname;
+        alert(songname);
         let words;
         $.ajax({
                     url: '\get\offers',
@@ -134,10 +144,11 @@
                        name: songname,
                        views: popularity
                      },
+                     async: false,
                      success: function(response) {
                        words = response.words;
                      }
-        })
+        });
         option1.innerHTML = words[0]; 
         option2.innerHTML = words[1];
         // option1.innerHTML = "data1";
@@ -148,20 +159,22 @@
                       songID: user_1_tracks[i],
                       word: option1.innerHTML
                      },
+                     async: false,
                      success: function(response) {
                        option1.value = response
                      }
-        })
+        });
         $.ajax({
                     url: '\get_weight',
                     data: {
                       songID: user_1_tracks[i],
                       word: option2.innerHTML
                      },
+                     async: false,
                      success: function(response) {
                        option2.value = response
                      }
-        })
+        });
         // option1.value = 1; 
         // option2.value = 1; 
         
@@ -223,6 +236,7 @@
                     data: {
                       songID: user_1_tracks[i],
                      },
+                     async: false,
                      success: function(response) {
                        songname = response.songname;
                        popularity = response.popularity;
@@ -237,6 +251,7 @@
                        name: songname,
                        views: popularity
                      },
+                     async: false,
                      success: function(response) {
                        words = response.words;
                      }
@@ -251,6 +266,7 @@
                       songID: user_1_tracks[i],
                       word: option1.innerHTML
                      },
+                     async: false,
                      success: function(response) {
                        option1.value = response
                      }
@@ -261,6 +277,7 @@
                       songID: user_1_tracks[i],
                       word: option2.innerHTML
                      },
+                     async: false,
                      success: function(response) {
                        option2.value = response
                      }
