@@ -544,7 +544,7 @@ app.get("/get_track_name",function(req,res)
    })
  })
 
- app.get("/add/word",function(req,res)
+ app.get("/word",function(req,res)
  {
    let userID = req.query.userID;
    let songID = req.query.songID;
@@ -555,7 +555,7 @@ app.get("/get_track_name",function(req,res)
    funcs.add_word(userID, username, songID, name, views, word);
  })
 
- app2.get("/add/word",function(req,res)
+ app2.get("/word",function(req,res)
  {
    let userID = req.query.userID;
    let songID = req.query.songID;
