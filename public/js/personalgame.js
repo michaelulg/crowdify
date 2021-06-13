@@ -715,7 +715,7 @@ module.exports.add_word = add_word;
 module.exports.search = search;
 module.exports.popular_songs = popular_songs;
 module.exports.get_weight = get_weight;
-
+module.exports.get_superusers = get_superusers;
 
 
 
