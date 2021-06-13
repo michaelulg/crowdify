@@ -185,7 +185,7 @@ app.get('/get_images_list',function(req,res){
     {
       urls.push(songs[i].track.album.images[0].url)
     }
-    res.send(urls);
+    res.send({urls: urls});
   })
 })
 

@@ -2,6 +2,7 @@
 //Sets important constants and variables
 let rows = document.getElementsByClassName("gridRow");
 let cells = document.getElementsByClassName("cell");
+var urls;
 
 //Creates a default grid sized 16x16 
 function defaultGrid() {
@@ -10,13 +11,21 @@ function defaultGrid() {
     makeColumns(10);
     container.addEventListener("mouseover", function( event ) {
         // highlight the mouseover target
+        var params = getHashParams();
+        var access_token = params.access_token;
+        var refresh_token = params.refresh_token;
+
         event.target.style.backgroundColor = "black";
         let square1 = document.createElement("a");
-        square1.innerHTML += "Game"
+        square1.innerHTML = "<a id='game'>Game</a>"
+        square1.href = "Game?access_token="+access_token+"&refresh_token="+refresh_token;
+
         event.target.appendChild(square1).className = "square";
         
         let square2 = document.createElement("a");
-        square2.innerHTML += "Query"
+        square2.innerHTML = "<a id='query'>Query</a>"
+        square2.href= "/Query#access_token="+access_token+ "&refresh_token="+refresh_token;
+
         event.target.appendChild(square2).className = "square";
       
         // reset the color after a short delay
@@ -25,7 +34,8 @@ function defaultGrid() {
         //}, 500);
       }, false);
     container.addEventListener("mouseout", function( event ) {
-        event.target.style.backgroundColor = "#" + Math.floor(Math.random()*16777215).toString(16);
+        pos = Math.floor((Math.random()*urls.length));
+        event.target.style.backgroundImage = "url("+ urls[pos] +")";
         event.target.textContent = '';
     }, false);
 }
@@ -49,8 +59,22 @@ function getHashParams() {
     return hashParams;
 }
 
+
 //Creates columns
 function makeColumns(cellNum) {
+    
+    var params = getHashParams();
+    var access_token = params.access_token;
+    $.ajax({
+        url: '\get_images_list',
+        data: {
+            access_token : access_token,
+        }, 
+        async : false,
+        success: function(response) {
+            urls = response.urls;
+        }
+    });
     for (i = 0; i < rows.length; i++) {
         for (j = 0; j < cellNum; j++) {
             var params = getHashParams();
@@ -59,33 +83,13 @@ function makeColumns(cellNum) {
             let newCell = document.createElement("a");
             newCell.setAttribute("href", "/Query#access_token="+access_token+ "&refresh_token="+refresh_token);
             
-            /*pos = Math.floor((Math.random()*20 + 1));
-            var params = getHashParams();
-            var access_token = params.access_token;
-            $.ajax({
-                url: '\song_render',
-                data: {
-                    access_token : access_token,
-                    pos: pos
-                }, 
-                async : false,
-                success: function(response) {
-                    songname = response.songname;
-                    image_url = response.image_url;
-
-                }
-            });*/
-
+            pos = Math.floor((Math.random()*urls.length));
 
             //newCell.setAttribute("href","/Game?access_token="+access_token+"&refresh_token="+refresh_token);
             newCell.style.cursor = "default";
-            const randomColor = Math.floor(Math.random()*16777215).toString(16);
-            while (randomColor == 000000) {
-                const randomColor = Math.floor(Math.random()*16777215).toString(16);
-            };
-            newCell.style.backgroundColor = "#" + randomColor;
+            
             newCell.setAttribute("style", 
-            "background-image: url(https://upload.wikimedia.org/wikipedia/commons/thumb/f/fb/Hotdog_-_Evan_Swigart.jpg/1280px-Hotdog_-_Evan_Swigart.jpg);background-size: 145px; width: 145px; height: 145px;");
+            "background-image: url("+ urls[pos] +");background-size: 145px; width: 145px; height: 145px;");
             rows[j].appendChild(newCell).className = "cell";
         };
     };
