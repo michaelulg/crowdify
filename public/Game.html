@@ -123,7 +123,9 @@
         $.ajax({
           url: '\getsongdata',
           data: {
-            songID: "7mEDVrAHDnQJStDo8jKJJm",
+
+            songID: user_1_tracks[i],
+
             access_token: access_token
           },
           async: false,
@@ -135,10 +137,13 @@
         });
         
         Title.innerHTML = songname;
+
         alert(songname);
+
         let words;
+        //alert(user_1_tracks);
         $.ajax({
-                    url: '\get\offers',
+                    url: '\get_offers',
                     data: {
                       songID: user_1_tracks[i],
                        name: songname,
@@ -177,7 +182,8 @@
         });
         // option1.value = 1; 
         // option2.value = 1; 
-        
+        //alert(option2.value);
+        //alert(game_id);
         option2.addEventListener('click', function()
         {
          
@@ -229,23 +235,27 @@
       let songname;
       let popularity;
       let words;
-      if(1 == 1)
+      if(i < 2)
       {
+        //alert(user_1_tracks[i]);
         $.ajax({
-                    url: '\get_track_name',
-                    data: {
-                      songID: user_1_tracks[i],
-                     },
-                     async: false,
-                     success: function(response) {
-                       songname = response.songname;
-                       popularity = response.popularity;
-                     }
-        })
-        name.innerHTML = songname;
+
+            url: '\getsongdata',
+            data: {
+              songID: user_1_tracks[i],
+              access_token: access_token
+              },
+              async: false,
+              success: function(response) {
+                songname = response["songname"];
+                popularity = response["popularity"];
+              }
+        });
+        Title.innerHTML = songname;
+
 
         $.ajax({
-                    url: '\get\offers',
+                    url: '\get_offers',
                     data: {
                        songID: user_1_tracks[i],
                        name: songname,
@@ -256,6 +266,8 @@
                        words = response.words;
                      }
         })
+
+
         option1.innerHTML = words[0]; 
         option2.innerHTML = words[1];
         // option1.innerHTML = "data1";
@@ -266,7 +278,9 @@
                       songID: user_1_tracks[i],
                       word: option1.innerHTML
                      },
-                     async: false,
+
+                     //async: false,
+
                      success: function(response) {
                        option1.value = response
                      }
@@ -310,7 +324,7 @@
         option1.value = 1;
         option2.value = 1;
       }
-      if(i == 8)
+      if(i == 2)
       {
         if(document.getElementById("User").value == 1)
         {

@@ -281,8 +281,8 @@ app.get('/Game', (req, res) => {
         // if(recent_tracks != undefined)
         // {console.log(recent_tracks.items[0].track.name);}
         // console.log("Connected");
-        participents.push({user_id: user_id});
-        // console.log(participents.length);
+        participents.push({'user_id': user_id, 'recent_tracks': popular_songs});
+        console.log(participents.length);
         console.log(socket.id);
         console.log("Connected");
         console.log(participents.length);
@@ -370,7 +370,7 @@ app.get('/Game', (req, res) => {
    });
  });
 
- app.get("/get/offers", function(req,res)
+ app.get("/get_offers", function(req,res)
  {
    let songID = req.query.songID;
    let name = req.query.name;
@@ -384,6 +384,23 @@ app.get('/Game', (req, res) => {
      )
    })
  });
+
+ app2.get("/get_offers", function(req,res)
+ {
+   console.log('inside get_offers');
+   let songID = req.query.songID;
+   let name = req.query.name;
+   let views = req.query.views;
+   funcs.get_offers(songID,name,views).then(function(result)
+   {
+     res.send(
+       {
+         words: result
+       }
+     )
+   })
+ });
+
 
  app.get("/search", function(req,res)
  {
@@ -400,6 +417,34 @@ app.get('/Game', (req, res) => {
 
 app2.get("/getsongdata",function(req,res)
 {
+
+  var curr_access_token = req.query.access_token;
+  console.log(curr_access_token);
+  var songID = req.query.songID;
+  var songname;
+  var popularity;
+  var image_url;
+  var artist;
+  var song_url;
+  var options = {
+    url: 'https://api.spotify.com/v1/tracks/'+songID,
+    headers: { 'Authorization': 'Bearer ' + curr_access_token },
+    json: true
+  };
+  request.get(options, function(error, response, body) {
+    // console.log('https://api.spotify.com/v1/tracks/'+songID);
+    image_url = body.album.images[1].url;
+    songname = body.name; 
+    popularity = body.popularity; 
+    artist = body.album.artists[0].name;
+    song_url = body.uri;
+    res.send({"image_url":image_url, "songname": songname, "popularity": popularity, "artist": artist, "song_url": song_url})
+  });
+});
+
+app.get("/get_track_name",function(req,res)
+{
+
   var curr_access_token = req.query.access_token;
   console.log(curr_access_token);
   var songID = req.query.songID;
@@ -424,6 +469,7 @@ app2.get("/getsongdata",function(req,res)
     res.send({"image_url":image_url, "songname": songname, "popularity": popularity, "artist": artist, "song_url": song_url})
   });
 });
+
 
 app.get("/get_track_name",function(req,res)
 {
@@ -451,6 +497,7 @@ app.get("/get_track_name",function(req,res)
     res.send({"image_url":image_url, "songname": songname, "popularity": popularity, "artist": artist, "song_url": song_url})
   });
 });
+
 
  app2.get("/get/superusers", function(req,res)
  {
@@ -531,7 +578,9 @@ app.get("/get_track_name",function(req,res)
 
 app2.get("/get_weight", function(req,res)
 {
+
   let weight;
+
   let word = req.query.word;
   let songID = req.query.songID;
   funcs.get_weight(songID,word).then(function(result)

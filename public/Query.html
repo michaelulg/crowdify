@@ -408,7 +408,9 @@
                   'pos': pos,
                   access_token: access_token
                 },
-                async: false,
+
+                //async: false,
+
                 success: function(response) {
 
                   /*var myrand = Math.floor((Math.random()*10 + 1));*/
@@ -423,13 +425,15 @@
                   //var words = get_offers(songID);
 
                   $.ajax({
-                    url: '\get\offers',
+                    url: '\get_offers',
                     data: {
                       songID: songID,
                       name: name,
                       views: popularity 
                     },
-                    async: false,
+
+                    //async: false,
+
                     success: function(response) {
                       words = response.words;
                     }
