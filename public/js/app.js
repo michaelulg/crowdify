@@ -59,19 +59,23 @@ function makeColumns(cellNum) {
             let newCell = document.createElement("a");
             // newCell.setAttribute("href", "/Query#access_token="+access_token+ "&refresh_token="+refresh_token);
             
-            /*pos = Math.floor((Math.random()*10 + 1));
+            /*pos = Math.floor((Math.random()*20 + 1));
+            var params = getHashParams();
+            var access_token = params.access_token;
             $.ajax({
                 url: '\song_render',
                 data: {
-                  'pos': pos,
-                   access_token: access_token
-                },
+                    access_token : access_token,
+                    pos: pos
+                }, 
+                async : false,
                 success: function(response) {
-                    songID = response.songID;
-                    popularity = response.popularity;
-                    song_name = response.songname;
+                    songname = response.songname;
+                    image_url = response.image_url;
+
                 }
             });*/
+
 
             newCell.setAttribute("href","/Game?access_token="+access_token+"&refresh_token="+refresh_token);
             newCell.style.cursor = "default";
@@ -113,8 +117,10 @@ function showsearch() {
 
 function getSearchTerm() {
     var elem = document.getElementById("search-head");
+
     elem.insertAdjacentHTML('beforeend', '<h7>'+decodeURI(location.search.substring(1)).split('&')[0]+'</h7><br>')
     //alert(decodeURI(location.search.substring(1)).split('#')[0]);
+
 }
 
 async function generateSongList() {
@@ -145,13 +151,14 @@ async function generateSongList() {
         let songID = song_ids[i];
         var params = getHashParams();
         var access_token = params.access_token;
-        
+
         $.ajax({
             url: '\get_track_name',
             data: {
                 songID : songID,
                 access_token : access_token
             }, 
+
             async: false,
             success: function(response) {
                 songname = response.songname;
@@ -161,9 +168,12 @@ async function generateSongList() {
             }
         });
         songs[i] = {songname : songname, artist : artist, image_url : image_url, song_url : song_url};
-        if(i != 0) {
-            elem.insertAdjacentHTML('beforeend', '<h7>'+songname+'</h7><br>');
-        }
+        var elem = document.getElementById("search-results");
+        elem.insertAdjacentHTML('afterbegin', '<li class="media"> <div id="search-img' + i + '" class="col-lg-14"> </div> <div class="media-body"> <h3 class="list-item-title">' + songname + '</h3> <p class="list-item-text"> By ' + artist + '</p> </div> <a class="btn-solid-reg page-scroll" href=' + song_url + '>Play song</button> </li>'); 
+        let img = document.getElementById("search-img" + i);
+        img.setAttribute("style", 
+            "background-image: url("+image_url+");background-size: 76.4px; width: 76.4px; height: 76.4px;");
+        img.setAttribute("href", song_url);
     }
 }
 
