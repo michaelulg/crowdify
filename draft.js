@@ -170,7 +170,26 @@
      })
    }
  });
-  
+
+app.get('/get_images_list',function(req,res){
+  var curr_access_token = req.query.access_token;
+  var options = {
+    url: 'https://api.spotify.com/v1/me/player/recently-played',
+    headers: { 'Authorization': 'Bearer ' + curr_access_token },
+    json: true
+  };
+  request.get(options,function(error,response,body){
+    var songs = body.items;
+    var urls = [];
+    for(i = 0 ; i < songs.length ; i++)
+    {
+      urls.push(songs[i].track.album.images[0].url)
+    }
+    res.send(urls);
+  })
+})
+
+
 app.get('/song_render',function(req,res) /*gets a random position in the recently played list of tracks, returns image url and song name*/
 {
   /*should we do here callback? to deal with multiple users? or just pass in req the tokens?*/
@@ -190,7 +209,7 @@ app.get('/song_render',function(req,res) /*gets a random position in the recentl
   // use the access token to access the Spotify Web API
   request.get(options, function(error, response, body) {
     console.log("body:")
-    console.log(body);
+    console.log(body.items[0]);
     songID = body.items[pos].track.id;
     /*console.log(songID);*/
     songname = body.items[pos].track.name;
