@@ -68,42 +68,64 @@
 
     <script  type="text/javascript" src="/socket.io/socket.io.js"></script>
     <script> 
-    function getHashParams() {
-          var hashParams = {};
-          var e, r = /([^&;=]+)=?([^&;]*)/g,
-              q = window.location.hash.substring(1);
-          while ( e = r.exec(q)) {
-             hashParams[e[1]] = decodeURIComponent(e[2]);
+
+    function call_ajax(url,data,async)
+    {
+      $.ajax({
+          url: url,
+          data: data,
+          async: async,
+          success: function(response) {
+            return response;
           }
-          return hashParams;
-        }
+        });
+    }
+    
+    function getHashParams() {
+      var hashParams = {};
+      var e, r = /([^&;=]+)=?([^&;]*)/g,
+          q = window.location.hash.substring(1);
+      while ( e = r.exec(q)) {
+         hashParams[e[1]] = decodeURIComponent(e[2]);
+      }
+      return hashParams;
+    }
+    
     var params = getHashParams();
     var access_token = params.access_token,
         refresh_token = params.refresh_token;
+      
     
-    var lock_user_id = 0; /*user id has been set- to protect from other player arriving and spoiling it*/
+    var lock_user_id = 0;
+    let lock_answered;
+
     var user_1_score = 0;
     var user_2_score = 0;
-    var user_1_tracks;
-    var user_2_tracks;
-    answers = [0,0]; /*who answered? two flags*/
+
+    var tracks;
+
     var option1 =  document.getElementById("option1");
     var option2 =  document.getElementById("option2");
     var Title =  document.getElementById("name");
+    var User = document.getElementById("User");
+    
     let i = 0;
-    let flag;
     let game_id = 0;
+    
     const socket = io(window.location.origin, {transports: ['websocket']});
     
+
     socket.on('IdentifyUser', function(data)
     {
       
       if(lock_user_id == 0){
         document.getElementById("userid").innerHTML = socket.id;
-        document.getElementById("User").value = data; 
+        User.value = data; 
         lock_user_id = 1;
       }
     })
+
+
     socket.on('InitGame', function(data)
     {
       
@@ -111,97 +133,119 @@
       document.getElementById("GameScreen").style.display = "block";
       document.getElementById("End").style.display = "none";
       /*replace room-screen with game screen*/
-        flag = 0; /*we dont allow more than one click*/
-        user_1_tracks = data.user_1;
-        user_2_tracks = data.user_2;
+        lock_answered = 0; /*we dont allow more than one click*/
+        tracks = data.tracks;
         game_id = data.game_id;
         document.getElementById("userid").innerHTML = data.game_id;
         let songname;
         let popularity;
         
-        
-        $.ajax({
-          url: '\getsongdata',
-          data: {
+        let song_data = call_ajax('\get_track_name',
+        {songID:tracks[i],access_token: access_token},
+        false);
+        songname = song_data["songname"];
+        popularity = song_data["popularity"];
 
-            songID: user_1_tracks[i],
+        // $.ajax({
+        //   url: '\get_track_name',
+        //   data: {
 
-            access_token: access_token
-          },
-          async: false,
-          success: function(response) {
-            //alert(response["songname"]);
-            songname = response["songname"];
-            popularity = response["popularity"];
-          }
-        });
+        //     songID: tracks[i],
+
+        //     access_token: access_token
+        //   },
+        //   async: false,
+        //   success: function(response) {
+        //     //alert(response["songname"]);
+        //     songname = response["songname"];
+        //     popularity = response["popularity"];
+        //   }
+        // });
         
         Title.innerHTML = songname;
 
         alert(songname);
 
         let words;
-        //alert(user_1_tracks);
-        $.ajax({
-                    url: '\get_offers',
-                    data: {
-                      songID: user_1_tracks[i],
-                       name: songname,
-                       views: popularity
-                     },
-                     async: false,
-                     success: function(response) {
-                       words = response.words;
-                     }
-        });
+        //alert(tracks);
+        let offers = call_ajax('\get_offers',
+        {songID: tracks[i], name: songname, views: popularity},
+        false);
+        words = offers.words;
+
+        // $.ajax({
+        //             url: '\get_offers',
+        //             data: {
+        //               songID: tracks[i],
+        //                name: songname,
+        //                views: popularity
+        //              },
+        //              async: false,
+        //              success: function(response) {
+        //                words = response.words;
+        //              }
+        // });
+
         option1.innerHTML = words[0]; 
         option2.innerHTML = words[1];
-        // option1.innerHTML = "data1";
-        // option2.innerHTML = "data2";
-        $.ajax({
-                    url: '\get_weight',
-                    data: {
-                      songID: user_1_tracks[i],
-                      word: option1.innerHTML
-                     },
-                     async: false,
-                     success: function(response) {
-                       option1.value = response
-                     }
-        });
-        $.ajax({
-                    url: '\get_weight',
-                    data: {
-                      songID: user_1_tracks[i],
-                      word: option2.innerHTML
-                     },
-                     async: false,
-                     success: function(response) {
-                       option2.value = response
-                     }
-        });
+
+        let wieght1, weight2;
+
+        weight1 = call_ajax('\get_weight',
+        {songID: tracks[i], word: option1.innerHTML},
+        false);
+        option1.value = weight1;
+        
+        weight2 = call_ajax('\get_weight',
+        {songID: tracks[i], word: option2.innerHTML},
+        false);
+        option2.value = weight2;
+        
+        // $.ajax({
+        //             url: '\get_weight',
+        //             data: {
+        //               songID: tracks[i],
+        //               word: option1.innerHTML
+        //              },
+        //              async: false,
+        //              success: function(response) {
+        //                option1.value = response
+        //              }
+        // });
+        // $.ajax({
+        //             url: '\get_weight',
+        //             data: {
+        //               songID: tracks[i],
+        //               word: option2.innerHTML
+        //              },
+        //              async: false,
+        //              success: function(response) {
+        //                option2.value = response
+        //              }
+        // });
         // option1.value = 1; 
         // option2.value = 1; 
         //alert(option2.value);
         //alert(game_id);
+
         option2.addEventListener('click', function()
         {
          
-          if(flag == 0)
+          if(lock_answered == 0)
           {
           
-          if(document.getElementById("User").value == 1)
+          if(User.value == 1)
           {
             /*manager of the game*/
             user_1_score += option2.value;
-            flag = 1;
-            socket.emit("answered", {user: document.getElementById("User").value, game_id: game_id});
+            lock_answered = 1;
+            socket.emit("answered", {user: User.value, game_id: game_id});
           }
           else
           {
             user_2_score += option2.value;
-            flag = 1;
-            socket.emit("answered", {user: document.getElementById("User").value, game_id: game_id});
+            lock_answered = 1;
+            socket.emit("answered", {user: User.value, game_id: game_id});
           }
           }
         })
@@ -209,141 +253,146 @@
         option1.addEventListener('click', function()
         {
           
-          if(flag == 0)
+          if(lock_answered == 0)
           {
           
-          if(document.getElementById("User").value == 1)
+          if(User.value == 1)
           {
             /*manager of the game*/
             user_1_score += option1.value;
-            flag = 1;
-            socket.emit("answered", {user: document.getElementById("User").value, game_id: game_id});
+            lock_answered = 1;
+            socket.emit("answered", {user: User.value, game_id: game_id});
           }
           else
           {
             user_2_score += option1.value;
-            flag = 1;
-            socket.emit("answered", {user: document.getElementById("User").value, game_id: game_id});
+            lock_answered = 1;
+            socket.emit("answered", {user: User.value, game_id: game_id});
           }
           }
         })
     })
+
+
     socket.on("NextRound",function()
     {
       i += 1;
-      flag = 0;
+      lock_answered = 0;
       let songname;
       let popularity;
       let words;
-      if(i < 2)
+      if(i < 5)
       {
-        //alert(user_1_tracks[i]);
-        $.ajax({
+        //alert(tracks[i]);
+        let song_data = call_ajax('\get_track_name',
+        {songID:tracks[i],access_token: access_token},
+        false);
+        songname = song_data["songname"];
+        popularity = song_data["popularity"];
+        
+        // $.ajax({
 
-            url: '\getsongdata',
-            data: {
-              songID: user_1_tracks[i],
-              access_token: access_token
-              },
-              async: false,
-              success: function(response) {
-                songname = response["songname"];
-                popularity = response["popularity"];
-              }
-        });
+        //     url: '\get_track_name',
+        //     data: {
+        //       songID: tracks[i],
+        //       access_token: access_token
+        //       },
+        //       async: false,
+        //       success: function(response) {
+        //         songname = response["songname"];
+        //         popularity = response["popularity"];
+        //       }
+        // });
+
         Title.innerHTML = songname;
 
+        // $.ajax({
+        //             url: '\get_offers',
+        //             data: {
+        //                songID: tracks[i],
+        //                name: songname,
+        //                views: popularity
+        //              },
+        //              async: false,
+        //              success: function(response) {
+        //                words = response.words;
+        //              }
+        // })
 
-        $.ajax({
-                    url: '\get_offers',
-                    data: {
-                       songID: user_1_tracks[i],
-                       name: songname,
-                       views: popularity
-                     },
-                     async: false,
-                     success: function(response) {
-                       words = response.words;
-                     }
-        })
-
+        let offers = call_ajax('\get_offers',
+        {songID: tracks[i], name: songname, views: popularity},
+        false);
+        words = offers.words;
 
         option1.innerHTML = words[0]; 
         option2.innerHTML = words[1];
+
+        let wieght1, weight2;
+
+        weight1 = call_ajax('\get_weight',
+        {songID: tracks[i], word: option1.innerHTML},
+        false);
+        option1.value = weight1;
+        
+        weight2 = call_ajax('\get_weight',
+        {songID: tracks[i], word: option2.innerHTML},
+        false);
+        option2.value = weight2;
+
         // option1.innerHTML = "data1";
         // option2.innerHTML = "data2";
-        $.ajax({
-                    url: '\get_weight',
-                    data: {
-                      songID: user_1_tracks[i],
-                      word: option1.innerHTML
-                     },
+        // $.ajax({
+        //             url: '\get_weight',
+        //             data: {
+        //               songID: tracks[i],
+        //               word: option1.innerHTML
+        //              },
 
-                     //async: false,
+        //              //async: false,
 
-                     success: function(response) {
-                       option1.value = response
-                     }
-        })
-        $.ajax({
-                    url: '\get_weight',
-                    data: {
-                      songID: user_1_tracks[i],
-                      word: option2.innerHTML
-                     },
-                     async: false,
-                     success: function(response) {
-                       option2.value = response
-                     }
-        })
+        //              success: function(response) {
+        //                option1.value = response
+        //              }
+        // })
+        // $.ajax({
+        //             url: '\get_weight',
+        //             data: {
+        //               songID: tracks[i],
+        //               word: option2.innerHTML
+        //              },
+        //              async: false,
+        //              success: function(response) {
+        //                option2.value = response
+        //              }
+        // })
         // option1.innerHTML = "data1";
         // option2.innerHTML = "data2";
         // option1.value = 1;
         // option2.value = 1;
       }
-      if(1 == 2)
+
+      if(i == 5)
       {
-        
-        document.getElementById("name").innerHTML = user_1_tracks[i];
-        let words;
-        // $.ajax({
-        //             url: '\get\offers',
-        //             data: {
-        //               songID: data.user_2.items[i].id,
-        //               name: data.user_2.items[i].id,
-        //               views: data.user_2.items[i].popularity
-        //             },
-        //             success: function(response) {
-        //               words = response.words;
-        //             }
-        // })
-        // option1.innerHTML = words[0]; 
-        // option2.innerHTML = words[1]; 
-        option1.innerHTML = "data1";
-        option2.innerHTML = "data2";
-        option1.value = 1;
-        option2.value = 1;
-      }
-      if(i == 2)
-      {
-        if(document.getElementById("User").value == 1)
+        if(User.value == 1)
         {
         socket.emit("EndGame", {user: 1 , score: user_1_score, game_id:game_id});
         }
-        if(document.getElementById("User").value == 2)
+        if(User.value == 2)
         {
         socket.emit("EndGame", {user: 2 , score: user_2_score, game_id:game_id});
         } 
         
       }
     })
+
+
     socket.on("Exit", function(data)
     {
       /*render final screen*/
       user_1_score = data.user_1_score;
       user_2_score = data.user_2_score;
       var winner = data.winner;
-      if(winner == document.getElementById("User").value)
+      if(winner == User.value)
       {
         document.getElementById("WaitingRoom").style.display = "none";
         document.getElementById("GameScreen").style.display = "none";
