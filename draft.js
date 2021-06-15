@@ -242,8 +242,9 @@ app1.get('/Game', (req, res) => {
             error: 'invalid_token'
           }));
   }
-  
+
   var user_id;
+  var username;
   var recent_tracks;
 
   var options = {
@@ -255,6 +256,7 @@ app1.get('/Game', (req, res) => {
   // use the access token to access the Spotify Web API
   request.get(options, function(error, response, body) {
     user_id = body.id;
+    username = body.display_name;
   });
 
   options = 
@@ -304,7 +306,7 @@ app1.get('/Game', (req, res) => {
         }
       })
       flag = socket.id;
-      participents.push({'user_id': user_id});
+      participents.push({'user_id': user_id, 'username': username});
       if(participents.length == 1)
       {
         io.emit('IdentifyUser',1); /*need to emit to specific room?*/
@@ -315,9 +317,11 @@ app1.get('/Game', (req, res) => {
       if(participents.length >= 2)
       {
         io.to(games_num).emit('IdentifyUser',2); 
-        user_1 = participents.pop();
         user_2 = participents.pop();
-        io.to(games_num).emit('InitGame', {tracks: popular_songs, game_id: games_num});  
+        user_1 = participents.pop();
+        io.to(games_num).emit('InitGame', {user_1_id: user_1['user_id'], user_2_id: user_2['user_id'],
+        user_1_name: user_1['username'], user_2_name: user_2['username'],
+        tracks: popular_songs, game_id: games_num});  
       }
     }
   });
