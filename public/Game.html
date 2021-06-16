@@ -96,7 +96,7 @@
         refresh_token = params.refresh_token;
     if(access_token == undefined)
     {
-      alert("invalid access token")
+      alert("invalid access token");
     }  
     else
     {
@@ -254,7 +254,7 @@
             call_ajax('\word',
               {userID: user_1_id, songID: tracks[i], username: user_1_name,
               name: songname, views: popularity, word: word}, false);
-              
+
             user_1_score += option2.value;
             lock_answered = 1;
             socket.emit("answered", {user: User.value, game_id: game_id});
@@ -425,7 +425,11 @@
         user_1_score = data.user_1_score;
         user_2_score = data.user_2_score;
         var winner = data.winner;
-        if(winner == User.value)
+        if(user_1_score == undefined)
+        {
+          alert("Other User Logged Out!");
+        }
+        else if(winner == User.value)
         {
           document.getElementById("WaitingRoom").style.display = "none";
           document.getElementById("GameScreen").style.display = "none";
