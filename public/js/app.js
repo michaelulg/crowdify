@@ -18,7 +18,7 @@ function defaultGrid() {
         event.target.style.backgroundColor = "black";
         let square1 = document.createElement("a");
         square1.innerHTML = "<a id='game'>Game</a>"
-        square1.href = "Game?access_token="+access_token+"&refresh_token="+refresh_token;
+        square1.href = "Game#access_token="+access_token+"&refresh_token="+refresh_token;
 
         event.target.appendChild(square1).className = "square";
         

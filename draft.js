@@ -31,7 +31,7 @@ var session2 = driver.session();
  
 var popular_songs; /*used for the game*/
 var flag = ""; /*without this flag, which functions as a lock, the connection scrtipt happens reapetedly*/
-var currently_playing;
+var currently_playing = {};
 var participents = []; /*information about participents that wish to play the game*/
 var games_arr = []; /*information about all games currently taking place*/
 var games_num = 0; /*total number of games*/
@@ -79,9 +79,9 @@ const io = new Server(server);
 /* ****************************************************************************** */  
 
 app2.get('/', (req, res) => {
-  curr_access_token = url.parse(req.url,true).query.access_token;
-  curr_access_token = url.parse(req.url,true).query.refresh_token;  
-  res.redirect("/Game_page#access_token="+access_token);
+  curr_access_token = req.query.access_token;
+  curr_access_token = req.query.refresh_token;  
+  res.redirect("/Game_page#access_token="+curr_access_token);
 });
     
 /**
@@ -253,10 +253,10 @@ catch(err)
 * @redirects to port 3000, the port for the game
 */
 app1.get('/Game', (req, res) => {
-  var curr_access_token = req.access_token;
-  var curr_refresh_token = req.refresh_token;
-
-  if(access_token == undefined)
+  var curr_access_token = req.query.access_token;
+  var curr_refresh_token = req.query.refresh_token;
+  
+  if(curr_access_token == undefined)
   {
     res.redirect('/#' +
           querystring.stringify({
@@ -284,7 +284,7 @@ try
     options = 
     {
     url: 'https://api.spotify.com/v1/me/player/recently-played',
-    headers: { 'Authorization': 'Bearer ' + access_token },
+    headers: { 'Authorization': 'Bearer ' + curr_access_token },
     json: true
     };
 
@@ -365,6 +365,7 @@ try
 
     }
   });
+  console.log(curr_access_token);
   res.redirect("http://localhost:3000?access_token="+curr_access_token+"&refresh_token="+curr_refresh_token);
 });
 
@@ -402,11 +403,13 @@ app1.get('/refresh_token', function(req, res) {
   }
 });
 
-app2.get("/get_tack_name",function(req,res)
+app2.get("/get_track_name",function(req,res)
 {
 
   var curr_access_token = req.query.access_token;
+  console.log("IN GET_TRACK_NAME");
   console.log(curr_access_token);
+  console.log(req.query.songID);
   var songID = req.query.songID;
   var songname;
   var popularity;

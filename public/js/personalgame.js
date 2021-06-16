@@ -31,7 +31,7 @@ const stop_words = ["i", "me", "my", "myself", "we", "our", "ours", "ourselves",
 
 async function run_query(query, mesg){
 
-    var driver = neo4j.driver('bolt://localhost', neo4j.auth.basic('neo4j', 'michaelul'));
+    var driver = neo4j.driver('bolt://localhost', neo4j.auth.basic('neo4j', '12345'));
 	let session = driver.session();
 	let answer;
 
