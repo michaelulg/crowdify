@@ -19,7 +19,7 @@ var client_id = '8dff2688f87941fbba7b44c3ec6ce680'; // client id, allocated for 
 var client_secret = '9ba69741607c4d709bac93513ebbdd99'; // secret id
 var redirect_uri = 'http://localhost:8888/callback'; //redirect uri, The uri that login re-directs to
 
-var driver = neo4j.driver("bolt://localhost:7687", neo4j.auth.basic("neo4j", "yonatan"));
+var driver = neo4j.driver("bolt://localhost:7687", neo4j.auth.basic("neo4j", "12345"));
 var session1 = driver.session();
 var session2 = driver.session();
  
@@ -66,6 +66,7 @@ app1.use('/search', express.static(__dirname + '/public/search.html'))
   .use(cookieParser());
 
 /* ********************************** Game Page ********************************* */
+
 app2.use('/Game_page', express.static(__dirname+'/public/Game.html'))
   .use(cors())
   .use(cookieParser());
@@ -367,7 +368,7 @@ try
     }
   });
   console.log(curr_access_token);
-  res.redirect("http://localhost:3000?access_token="+curr_access_token+"&refresh_token="+curr_refresh_token);
+  res.redirect("http://localhost:3000?access_token="+curr_refresh_token+"&refresh_token="+curr_access_token);
 });
 
 /**
@@ -425,6 +426,7 @@ app2.get("/get_track_name",function(req,res)
       json: true
     };
     request.get(options, function(error, response, body) {
+      console.log(body);
       // console.log('https://api.spotify.com/v1/tracks/'+songID);
       image_url = body.album.images[1].url;
       songname = body.name; 

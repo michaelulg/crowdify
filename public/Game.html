@@ -71,15 +71,16 @@
 
     function call_ajax(url,data,async)
     {
-      alert(url);
+      var res;
       $.ajax({
           url: url,
           data: data,
           async: async,
           success: function(response) {
-            return response;
+            res = response;
           }
         });
+        return res;
     }
     
     function getHashParams() {
@@ -153,6 +154,7 @@
         document.getElementById("userid").innerHTML = data.game_id;
         let songname;
         let popularity;
+        
         let song_data = call_ajax('\\get_track_name',
         {songID:tracks[i],access_token: access_token},
         false);
@@ -178,11 +180,11 @@
           
         Title.innerHTML = songname;
 
-        alert(songname);
+        
 
         let words;
         //alert(tracks);
-        let offers = call_ajax('\get_offers',
+        let offers = call_ajax('\\get_offers',
         {songID: tracks[i], name: songname, views: popularity},
         false);
         words = offers.words;
@@ -205,12 +207,12 @@
 
         let weight1, weight2;
 
-        weight1 = call_ajax('\get_weight',
+        weight1 = call_ajax('\\get_weight',
         {songID: tracks[i], word: option1.innerHTML},
         false);
         option1.value = weight1;
           
-        weight2 = call_ajax('\get_weight',
+        weight2 = call_ajax('\\get_weight',
         {songID: tracks[i], word: option2.innerHTML},
         false);
         option2.value = weight2;
@@ -252,7 +254,7 @@
           {
             /*manager of the game*/
             let word = option2.innerHTML;
-            call_ajax('\word',
+            call_ajax('\\word',
               {userID: user_1_id, songID: tracks[i], username: user_1_name,
               name: songname, views: popularity, word: word}, false);
 
@@ -263,7 +265,7 @@
           else
           {
             let word = option2.innerHTML;
-            call_ajax('\word',
+            call_ajax('\\word',
               {userID: user_2_id, songID: tracks[i], username: user_2_name,
               name: songname, views: popularity, word: word}, false);
 
@@ -283,7 +285,7 @@
             if(User.value == 1)
             {
               let word = option1.innerHTML;
-              call_ajax('\word',
+              call_ajax('\\word',
               {userID: user_1_id, songID: tracks[i], username: user_1_name,
               name: songname, views: popularity, word: word}, false);
 
@@ -295,7 +297,7 @@
             else
             {
               let word = option1.innerHTML;
-              call_ajax('\word',
+              call_ajax('\\word',
               {userID: user_2_id, songID: tracks[i], username: user_2_name,
               name: songname, views: popularity, word: word}, false);
 
@@ -318,7 +320,7 @@
         if(i < 5)
         {
           //alert(tracks[i]);
-          let song_data = call_ajax('\get_track_name',
+          let song_data = call_ajax('\\get_track_name',
           {songID:tracks[i],access_token: access_token},
           false);
           songname = song_data["songname"];
@@ -353,7 +355,7 @@
           //              }
           // })
 
-          let offers = call_ajax('\get_offers',
+          let offers = call_ajax('\\get_offers',
           {songID: tracks[i], name: songname, views: popularity},
           false);
           words = offers.words;
@@ -363,12 +365,12 @@
 
           let weight1, weight2;
 
-          weight1 = call_ajax('\get_weight',
+          weight1 = call_ajax('\\get_weight',
           {songID: tracks[i], word: option1.innerHTML},
           false);
           option1.value = weight1;
           
-          weight2 = call_ajax('\get_weight',
+          weight2 = call_ajax('\\get_weight',
           {songID: tracks[i], word: option2.innerHTML},
           false);
           option2.value = weight2;

@@ -441,139 +441,6 @@
           var offers = call_ajax('\\get_offers',
             { songID: songID, name: name, views: popularity },
             false);
-
-          // words = offers.words;
-         
-          // var len = words.lenght;
-          // var options;
-
-          // if (len == 0) {
-          //   options = { option_1: "-", option_2: "-", option_3: "-", image_url: response.image_url };
-          //   document.getElementById("option_1").style.display = "none";
-          //   document.getElementById("option_2").style.display = "none";
-          //   document.getElementById("option_3").style.display = "none";
-          // }
-          // if (len == 1) {
-          //   options = { option_1: words[0], option_2: "-", option_3: "-", image_url: response.image_url };
-          //   document.getElementById("option_2").style.display = "none";
-          //   document.getElementById("option_3").style.display = "none";
-          // }
-          // if (len == 2) {
-          //   options = { option_1: words[0], option_2: words[1], option_3: "-", image_url: response.image_url };
-          //   document.getElementById("option_3").style.display = "none";
-          // }
-          // else {
-          //   options = { option_1: words[0], option_2: words[1], option_3: words[2], image_url: response.image_url };
-          // }
-
-          // optionsPlaceholder.innerHTML = optionsTemplate(options);
-
-          // var super_users;
-          // super_users = call_ajax('\\get_superusers', {}, false).super_users;
-          // var users = { user_1: super_users[0]['username'], user_2: super_users[1]['username'], user_3: "none" };
-          // superusersPlaceholder.innerHTML = superusersTemplate(users);
-
-          // $.ajax({
-          //     url: '\song_render',
-          //     data: {
-          //       'pos': pos,
-          //       access_token: access_token
-          //     },
-
-          //     //async: false,
-
-          //     success: function(response) {
-
-          //       /*var myrand = Math.floor((Math.random()*10 + 1));*/
-          //       /*var url = get_image_url("");
-          //       var name = {image_url:'https://i.scdn.co/image/ab67616d00001e02a6a335d613d151c626895a83',track:{name:response.items[myrand].track.name},}; */
-          //       /*var image_url = get_image_url(items.id);*/
-          //       userProfilePlaceholder.innerHTML = userProfileTemplate(response);
-          //       songID = response.songID;
-          //       popularity = response.popularity;
-          //       name = response.songname;
-          //       let words;
-          //       //var words = get_offers(songID); 
-
-          //       $.ajax({
-          //         url: '\get_offers',
-          //         data: {
-          //           songID: songID,
-          //           name: name,
-          //           views: popularity 
-          //         },
-
-          //         async: false,
-
-          //         success: function(response) {
-          //           words = response.words;
-          //         }
-          //       });
-
-          //       var super_users;
-          //       alert('im js and im not working');
-
-          //       $.ajax({
-          //         url: '\get_superusers',
-          //         // data: {
-          //         //},
-
-          //         async: false,
-
-          //         success: function(response) {
-          //           super_users = response.super_users;
-          //         }
-          //       });
-
-          //       alert(super_users[0]['username']);
-          //       alert(super_users[0]['score']);
-
-          //       //var options = {option_1:"TRYING", option_2: "TRYING", option_3: "TRYING", image_url: response.image_url};
-          //       var users = {user_1: super_users[0]['username'], user_2: super_users[1]['username'], user_3: "none"};
-
-          //       //optionsPlaceholder.innerHTML = optionsTemplate(options); /*render options*/
-          //       superusersPlaceholder.innerHTML = superusersTemplate(users);
-
-          //       //if(word.length >=3)
-          //       //{
-          //       //alert(words[0]); 
-          //       //var options = {option_1: words[0], option_2: "TRYING", option_3: "TRYING", image_url: response.image_url};
-          //       //optionsPlaceholder.innerHTML = optionsTemplate(options); /*render options*/
-          //       //}
-
-          //       var len = words.lenght;
-          //       if(len == 0){
-          //         var options = {option_1: "-", option_2: "-", option_3: "-", image_url: response.image_url};
-          //         document.getElementById("option_1").style.display = "none";
-          //         document.getElementById("option_2").style.display = "none";
-          //         document.getElementById("option_3").style.display = "none";
-          //       }
-          //       if(len == 1){
-          //         var options = {option_1: words[0], option_2: "-", option_3: "-", image_url: response.image_url};
-          //         document.getElementById("option_2").style.display = "none";
-          //         document.getElementById("option_3").style.display = "none";
-          //       }
-          //       if(len == 2){
-          //         var options = {option_1: words[0], option_2: words[1], option_3: "-", image_url: response.image_url};
-          //         document.getElementById("option_3").style.display = "none";
-          //       }
-          //       else{
-          //         var options = {option_1: words[0], option_2: words[1], option_3: words[2], image_url: response.image_url};
-          //       }
-
-          //       optionsPlaceholder.innerHTML = optionsTemplate(options); /*render options*/
-
-          //       //else
-          //       //{
-          //       //document.getElementById("options").style.display = "none";
-          //       /*hide options*/
-          //       //}
-
-          //       var users_arr = get_super_users(); /*need to render top 3 on the screen- Grabois
-          //       problem is that we keep id's and not name*/
-
-          //     }
-          // });
           document.getElementById('pick-new-song').addEventListener('click', function () {
 
             pos = Math.floor((Math.random() * 10 + 1));
@@ -615,82 +482,6 @@
             }
 
             optionsPlaceholder.innerHTML = optionsTemplate(options); /*render options*/
-            // $.ajax({
-            //     url: '\song_render',
-            //     data: {
-            //       'pos': pos,
-            //        access_token: access_token
-            //     },
-            //     async: false,
-            //     success: function(response) {
-            //       userProfilePlaceholder.innerHTML = userProfileTemplate(response);
-            //       songID = response.songID;
-            //       popularity = response.popularity;
-            //       name = response.songname;
-            //       let words;
-            //       //var words = get_offers(songID);
-
-            //       $.ajax({
-            //         url: '\get_offers',
-            //         data: {
-            //           songID: songID,
-            //           name: name,
-            //           views: popularity 
-            //         },
-
-            //         async: false,
-
-            //         success: function(response) {
-            //           words = response.words;
-            //         }
-            //       });
-
-            //       //var options = {option_1:"TRYING", option_2: "TRYING", option_3: "TRYING", image_url: response.image_url};
-            //       var users = {user_1: "Trying", user_2: "Trying", user_3: "Trying"};
-
-            //       //optionsPlaceholder.innerHTML = optionsTemplate(options); /*render options*/
-            //       //superusersPlaceholder.innerHTML = superusersTemplate(users);
-
-            //       //if(word.length >=3)
-            //       //{
-            //       //alert(words[0]); 
-            //       //var options = {option_1: words[0], option_2: "TRYING", option_3: "TRYING", image_url: response.image_url};
-            //       //}
-
-            //       var len = words.lenght;
-            //       if(len == 0){
-            //         var options = {option_1: "-", option_2: "-", option_3: "-", image_url: response.image_url};
-            //         document.getElementById('option_1').style.display = "none";
-            //         document.getElementById("option_2").style.display = "none";
-            //         document.getElementById("option_3").style.display = "none";
-            //       }
-            //       if(len == 1){
-            //         var options = {option_1: words[0], option_2: "-", option_3: "-", image_url: response.image_url};
-            //         document.getElementById("option_2").style.display = "none";
-            //         document.getElementById("option_3").style.display = "none";
-            //       }
-            //       if(len == 2){
-            //         var options = {option_1: words[0], option_2: words[1], option_3: "-", image_url: response.image_url};
-            //         document.getElementById("option_3").style.display = "none";
-            //       }
-            //       else{
-            //         var options = {option_1: words[0], option_2: words[1], option_3: words[2], image_url: response.image_url};
-            //       }
-
-            //       optionsPlaceholder.innerHTML = optionsTemplate(options); /*render options*/
-
-            //       //else
-            //       //{
-            //       //document.getElementById("options").style.display = "none";
-            //       /*hide options*/
-            //       //}
-
-            //       var users_arr = get_super_users(); /*need to render top 3 on the screen- Grabois
-            //       problem is that we keep id's and not name*/
-            //       $('#login').hide();
-            //       $('#loggedin').show();
-            //     }
-            // });
           }, false);
 
           document.getElementById('submit-data').addEventListener('click', function (req, res) {
@@ -700,18 +491,7 @@
                 userID: userID, songID: songID, username: username,
                 name: name, views: popularity, word: word
               }, false);
-            // $.ajax({
-            //   url: '\word',
-            //   data: {
-            //     userID: userID,
-            //     songID: songID,
-            //     username: username,
-            //     name: name,
-            //     views: popularity,
-            //     word: word
-            //   },
-            //   async: false,
-            // }) 
+             
           });
 
           document.getElementById('option_1').addEventListener('click', function (req, res) {
@@ -721,18 +501,7 @@
                 userID: userID, songID: songID, username: username,
                 name: name, views: popularity, word: word
               }, false);
-            // $.ajax({
-            //   url: '\word',
-            //   data: {
-            //     userID: userID,
-            //     songID: songID,
-            //     username: username,
-            //     name: name,
-            //     views: popularity,
-            //     word: word
-            //   },
-            //   async: false,
-            // })
+            
           });
 
           document.getElementById('option_2').addEventListener('click', function (req, res) {
@@ -742,18 +511,7 @@
                 userID: userID, songID: songID, username: username,
                 name: name, views: popularity, word: word
               }, false);
-            // $.ajax({
-            //   url: '\word',
-            //   data: {
-            //     userID: userID,
-            //     songID: songID,
-            //     username: username,
-            //     name: name,
-            //     views: popularity,
-            //     word: word
-            //   },
-            //   async: false,
-            // })
+           
           });
 
           document.getElementById('option_3').addEventListener('click', function (req, res) {
@@ -763,18 +521,7 @@
                 userID: userID, songID: songID, username: username,
                 name: name, views: popularity, word: word
               }, false);
-            // $.ajax({
-            //   url: '\word',
-            //   data: {
-            //     userID: userID,
-            //     songID: songID,
-            //     username: username,
-            //     name: name,
-            //     views: popularity,
-            //     word: word
-            //   },
-            //   async: false,
-            // })
+            
           }, false);
 
         } else {
