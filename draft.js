@@ -212,6 +212,7 @@ app1.get('/song_render',function(req,res) /*gets a random position in the recent
   var songname;
   var popularity;
   var image_url;
+  console.log("Here");
   try
   {
     var options = {
@@ -531,6 +532,7 @@ console.log('inside get_superusers in app2');
       }
     )
   })
+  res.send({});
 })
 
 app2.get("/get_superusers", function(req,res)
@@ -544,6 +546,7 @@ app2.get("/get_superusers", function(req,res)
       }
     )
   })
+  res.send({});
 })
 
 
@@ -555,7 +558,10 @@ app1.get("/word",function(req,res)
   let name = req.query.name;
   let views = req.query.views;
   let word = req.query.word;
+  console.log("stuck");
   funcs.add_word(userID, username, songID, name, views, word);
+  console.log("realese");
+  res.send({});
 })
 
 app2.get("/word",function(req,res)
@@ -567,6 +573,7 @@ app2.get("/word",function(req,res)
   let views = req.query.views;
   let word = req.query.word;
   funcs.add_word(userID, username, songID, name, views, word);
+  res.send({});
 })
 
 
@@ -576,6 +583,7 @@ app1.get("/choose/word",function(req,res)
   let songID = req.query.songID;
   let word = req.query.word;
   funcs.add_word(userID,songID,word);
+  res.send({});
 })
 
 app2.get("/choose/word",function(req,res)
@@ -584,6 +592,7 @@ app2.get("/choose/word",function(req,res)
   let songID = req.query.songID;
   let word = req.query.word;
   funcs.add_word(userID,songID,word);
+  res.send({});
 })
 
 
