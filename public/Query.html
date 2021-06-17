@@ -94,7 +94,7 @@
     </header>
     </div>
     <!-- end of description -->
-    
+
     <!-- Features -->
     <div id="loggedin"> 
       <div id="features" class="tabs">
@@ -178,7 +178,7 @@
     </div>
     <!-- end of features -->
 
-    
+
 
     <!-- Footer -->
     <div class="footer">
@@ -230,7 +230,7 @@
     </div> <!-- end of footer -->  
     <!-- end of footer -->
 
-    
+
     <!-- Copyright -->
     <div class="copyright">
         <div class="container">
@@ -317,8 +317,8 @@
         </div>
       </div>
     </script>
+
     
-    	
     <!-- Scripts -->
     <script src="js/jquery.min.js"></script> <!-- jQuery for Bootstrap's JavaScript plugins -->
     <script src="js/bootstrap.min.js"></script> <!-- Bootstrap framework -->
@@ -329,35 +329,35 @@
     <script src="js/scripts.js"></script> <!-- Custom scripts -->
     <script src="//cdnjs.cloudflare.com/ajax/libs/handlebars.js/2.0.0-alpha.1/handlebars.min.js"></script>
     <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
-    <script src="personalgame.js"></script>
+    <script src="js/personalgame.js"></script>
 
     <script>
-      $(document).ready(function() {
+      $(document).ready(function () {
 
         /**
          * Obtains parameters from the hash of the URL
          * @return Object
          */
+        var num = 1;
         function getHashParams() {
           var hashParams = {};
           var e, r = /([^&;=]+)=?([^&;]*)/g,
-              q = window.location.hash.substring(1);
-          while ( e = r.exec(q)) {
-             hashParams[e[1]] = decodeURIComponent(e[2]);
+            q = window.location.hash.substring(1);
+          while (e = r.exec(q)) {
+            hashParams[e[1]] = decodeURIComponent(e[2]);
           }
           return hashParams;
         }
 
-        function call_ajax(url,data,async)
-        {
+        function call_ajax(url, data, async) {
           $.ajax({
-              url: url,
-              data: data,
-              async: async,
-              success: function(response) {
-                return response;
-              }
-            });
+            url: url,
+            data: data,
+            async: async,
+            success: function (response) {
+              return response;
+            }
+          });
         }
 
         var userID;
@@ -367,95 +367,95 @@
         var name; /*song's name*/
 
         var userProfileSource = document.getElementById('user-profile-template').innerHTML,
-            userProfileTemplate = Handlebars.compile(userProfileSource),
-            userProfilePlaceholder = document.getElementById('user-profile');
+          userProfileTemplate = Handlebars.compile(userProfileSource),
+          userProfilePlaceholder = document.getElementById('user-profile');
 
         var oauthSource = document.getElementById('oauth-template').innerHTML,
-            oauthTemplate = Handlebars.compile(oauthSource),
-            oauthPlaceholder = document.getElementById('oauth');
+          oauthTemplate = Handlebars.compile(oauthSource),
+          oauthPlaceholder = document.getElementById('oauth');
 
         var optionsSource = document.getElementById('suggested-words-template').innerHTML,
-            optionsTemplate = Handlebars.compile(optionsSource),
-            optionsPlaceholder = document.getElementById('options');
+          optionsTemplate = Handlebars.compile(optionsSource),
+          optionsPlaceholder = document.getElementById('options');
 
         var superusersSource = document.getElementById('super-users-template').innerHTML,
-            superusersTemplate = Handlebars.compile(superusersSource),
-            superusersPlaceholder = document.getElementById('super-users');
+          superusersTemplate = Handlebars.compile(superusersSource),
+          superusersPlaceholder = document.getElementById('super-users');
 
-    
+
         var params = getHashParams();
         var access_token = params.access_token,
-            refresh_token = params.refresh_token,
-            error = params.error,
-            
+          refresh_token = params.refresh_token,
+          error = params.error,
+
         if (error) {
           alert('There was an error during the authentication');
         } else {
           if (access_token) {
             // render oauth info
-              oauthPlaceholder.innerHTML = oauthTemplate({
+            oauthPlaceholder.innerHTML = oauthTemplate({
               access_token: access_token,
               refresh_token: refresh_token
             });
-            var pos = Math.floor((Math.random()*10 + 1));
+            var pos = Math.floor((Math.random() * 10 + 1));
             $.ajax({ /*init user_id and user_name*/
-                url: 'https://api.spotify.com/v1/me',
-                headers: {
-                  'Authorization': 'Bearer ' + access_token
-                },
-                async: false,
-                success: function(response) {
-                  userID = response.id;
-                  username = response.display_name;
-                  $('#login').hide();
-                  $('#loggedin').show();
-                }
-                
+              url: 'https://api.spotify.com/v1/me',
+              headers: {
+                'Authorization': 'Bearer ' + access_token
+              },
+              async: false,
+              success: function (response) {
+                userID = response.id;
+                username = response.display_name;
+                $('#login').hide();
+                $('#loggedin').show();
+              }
+
             });
 
-            var song_data = call_ajax('\song_render',
-            {'pos': pos, access_token: access_token},
-            false);
+            var song_data = call_ajax('\\song_render',
+              { 'pos': pos, access_token: access_token },
+              false);
 
             userProfilePlaceholder.innerHTML = userProfileTemplate(song_data);
             songID = song_data.songID;
             popularity = song_data.popularity;
             name = song_data.songname;
             let words;
-            
-            var offers = call_ajax('\get_offers',
-            {songID: songID, name: name, views: popularity },
-            false);
+
+            var offers = call_ajax('\\get_offers',
+              { songID: songID, name: name, views: popularity },
+              false);
 
             words = offers.words;
 
             var len = words.lenght;
             var options;
-      
-            if(len == 0){
-              options = {option_1: "-", option_2: "-", option_3: "-", image_url: response.image_url};
+
+            if (len == 0) {
+              options = { option_1: "-", option_2: "-", option_3: "-", image_url: response.image_url };
               document.getElementById("option_1").style.display = "none";
               document.getElementById("option_2").style.display = "none";
               document.getElementById("option_3").style.display = "none";
             }
-            if(len == 1){
-              options = {option_1: words[0], option_2: "-", option_3: "-", image_url: response.image_url};
-               document.getElementById("option_2").style.display = "none";
-               document.getElementById("option_3").style.display = "none";
-            }
-            if(len == 2){
-              options = {option_1: words[0], option_2: words[1], option_3: "-", image_url: response.image_url};
+            if (len == 1) {
+              options = { option_1: words[0], option_2: "-", option_3: "-", image_url: response.image_url };
+              document.getElementById("option_2").style.display = "none";
               document.getElementById("option_3").style.display = "none";
             }
-            else{
-              options = {option_1: words[0], option_2: words[1], option_3: words[2], image_url: response.image_url};
+            if (len == 2) {
+              options = { option_1: words[0], option_2: words[1], option_3: "-", image_url: response.image_url };
+              document.getElementById("option_3").style.display = "none";
+            }
+            else {
+              options = { option_1: words[0], option_2: words[1], option_3: words[2], image_url: response.image_url };
             }
 
             optionsPlaceholder.innerHTML = optionsTemplate(options);
 
             var super_users;
-            super_users = call_ajax('\get_superusers', {}, false).super_users;
-            var users = {user_1: super_users[0]['username'], user_2: super_users[1]['username'], user_3: "none"};
+            super_users = call_ajax('\\get_superusers', {}, false).super_users;
+            var users = { user_1: super_users[0]['username'], user_2: super_users[1]['username'], user_3: "none" };
             superusersPlaceholder.innerHTML = superusersTemplate(users);
             // $.ajax({
             //     url: '\song_render',
@@ -514,10 +514,10 @@
 
             //       //var options = {option_1:"TRYING", option_2: "TRYING", option_3: "TRYING", image_url: response.image_url};
             //       var users = {user_1: super_users[0]['username'], user_2: super_users[1]['username'], user_3: "none"};
-                  
+
             //       //optionsPlaceholder.innerHTML = optionsTemplate(options); /*render options*/
             //       superusersPlaceholder.innerHTML = superusersTemplate(users);
-                
+
             //       //if(word.length >=3)
             //       //{
             //       //alert(words[0]); 
@@ -546,221 +546,228 @@
             //       }
 
             //       optionsPlaceholder.innerHTML = optionsTemplate(options); /*render options*/
-                  
+
             //       //else
             //       //{
             //       //document.getElementById("options").style.display = "none";
             //       /*hide options*/
             //       //}
-                  
+
             //       var users_arr = get_super_users(); /*need to render top 3 on the screen- Grabois
             //       problem is that we keep id's and not name*/
-                  
+
             //     }
             // });
-            document.getElementById('pick-new-song').addEventListener('click', function() {
-            
-            pos = Math.floor((Math.random()*10 + 1));
-            var song_data = call_ajax('\song_render',
-            {'pos': pos, access_token: access_token},
-            false);
+            document.getElementById('pick-new-song').addEventListener('click', function () {
 
-            userProfilePlaceholder.innerHTML = userProfileTemplate(song_data);
-            songID = song_data.songID;
-            popularity = song_data.popularity;
-            name = song_data.songname;
-            let words;
-            
-            var offers = call_ajax('\get_offers',
-            {songID: songID, name: name, views: popularity },
-            false);
+              pos = Math.floor((Math.random() * 10 + 1));
+              var song_data = call_ajax('\\song_render',
+                { 'pos': pos, access_token: access_token },
+                false);
 
-            words = offers.words;
+              userProfilePlaceholder.innerHTML = userProfileTemplate(song_data);
+              songID = song_data.songID;
+              popularity = song_data.popularity;
+              name = song_data.songname;
+              let words;
 
-            var len = words.lenght;
-            var options;
-            if(len == 0){
-              options = {option_1: "-", option_2: "-", option_3: "-", image_url: response.image_url};
-              document.getElementById('option_1').style.display = "none";
-              document.getElementById("option_2").style.display = "none";
-              document.getElementById("option_3").style.display = "none";
-            }
-            if(len == 1){
-              options = {option_1: words[0], option_2: "-", option_3: "-", image_url: response.image_url};
-               document.getElementById("option_2").style.display = "none";
-               document.getElementById("option_3").style.display = "none";
-            }
-            if(len == 2){
-              options = {option_1: words[0], option_2: words[1], option_3: "-", image_url: response.image_url};
-              document.getElementById("option_3").style.display = "none";
-            }
-            else{
-              options = {option_1: words[0], option_2: words[1], option_3: words[2], image_url: response.image_url};
-            }
+              var offers = call_ajax('\\get_offers',
+                { songID: songID, name: name, views: popularity },
+                false);
 
-            optionsPlaceholder.innerHTML = optionsTemplate(options); /*render options*/
-            // $.ajax({
-            //     url: '\song_render',
-            //     data: {
-            //       'pos': pos,
-            //        access_token: access_token
-            //     },
-            //     async: false,
-            //     success: function(response) {
-            //       userProfilePlaceholder.innerHTML = userProfileTemplate(response);
-            //       songID = response.songID;
-            //       popularity = response.popularity;
-            //       name = response.songname;
-            //       let words;
-            //       //var words = get_offers(songID);
+              words = offers.words;
 
-            //       $.ajax({
-            //         url: '\get_offers',
-            //         data: {
-            //           songID: songID,
-            //           name: name,
-            //           views: popularity 
-            //         },
+              var len = words.lenght;
+              var options;
+              if (len == 0) {
+                options = { option_1: "-", option_2: "-", option_3: "-", image_url: response.image_url };
+                document.getElementById('option_1').style.display = "none";
+                document.getElementById("option_2").style.display = "none";
+                document.getElementById("option_3").style.display = "none";
+              }
+              if (len == 1) {
+                options = { option_1: words[0], option_2: "-", option_3: "-", image_url: response.image_url };
+                document.getElementById("option_2").style.display = "none";
+                document.getElementById("option_3").style.display = "none";
+              }
+              if (len == 2) {
+                options = { option_1: words[0], option_2: words[1], option_3: "-", image_url: response.image_url };
+                document.getElementById("option_3").style.display = "none";
+              }
+              else {
+                options = { option_1: words[0], option_2: words[1], option_3: words[2], image_url: response.image_url };
+              }
 
-            //         async: false,
+              optionsPlaceholder.innerHTML = optionsTemplate(options); /*render options*/
+              // $.ajax({
+              //     url: '\song_render',
+              //     data: {
+              //       'pos': pos,
+              //        access_token: access_token
+              //     },
+              //     async: false,
+              //     success: function(response) {
+              //       userProfilePlaceholder.innerHTML = userProfileTemplate(response);
+              //       songID = response.songID;
+              //       popularity = response.popularity;
+              //       name = response.songname;
+              //       let words;
+              //       //var words = get_offers(songID);
 
-            //         success: function(response) {
-            //           words = response.words;
-            //         }
-            //       });
+              //       $.ajax({
+              //         url: '\get_offers',
+              //         data: {
+              //           songID: songID,
+              //           name: name,
+              //           views: popularity 
+              //         },
 
-            //       //var options = {option_1:"TRYING", option_2: "TRYING", option_3: "TRYING", image_url: response.image_url};
-            //       var users = {user_1: "Trying", user_2: "Trying", user_3: "Trying"};
-                  
-            //       //optionsPlaceholder.innerHTML = optionsTemplate(options); /*render options*/
-            //       //superusersPlaceholder.innerHTML = superusersTemplate(users);
-                
-            //       //if(word.length >=3)
-            //       //{
-            //       //alert(words[0]); 
-            //       //var options = {option_1: words[0], option_2: "TRYING", option_3: "TRYING", image_url: response.image_url};
-            //       //}
+              //         async: false,
 
-            //       var len = words.lenght;
-            //       if(len == 0){
-            //         var options = {option_1: "-", option_2: "-", option_3: "-", image_url: response.image_url};
-            //         document.getElementById('option_1').style.display = "none";
-            //         document.getElementById("option_2").style.display = "none";
-            //         document.getElementById("option_3").style.display = "none";
-            //       }
-            //       if(len == 1){
-            //         var options = {option_1: words[0], option_2: "-", option_3: "-", image_url: response.image_url};
-            //         document.getElementById("option_2").style.display = "none";
-            //         document.getElementById("option_3").style.display = "none";
-            //       }
-            //       if(len == 2){
-            //         var options = {option_1: words[0], option_2: words[1], option_3: "-", image_url: response.image_url};
-            //         document.getElementById("option_3").style.display = "none";
-            //       }
-            //       else{
-            //         var options = {option_1: words[0], option_2: words[1], option_3: words[2], image_url: response.image_url};
-            //       }
+              //         success: function(response) {
+              //           words = response.words;
+              //         }
+              //       });
 
-            //       optionsPlaceholder.innerHTML = optionsTemplate(options); /*render options*/
-                  
-            //       //else
-            //       //{
-            //       //document.getElementById("options").style.display = "none";
-            //       /*hide options*/
-            //       //}
-                  
-            //       var users_arr = get_super_users(); /*need to render top 3 on the screen- Grabois
-            //       problem is that we keep id's and not name*/
-            //       $('#login').hide();
-            //       $('#loggedin').show();
-            //     }
-            // });
-          }, false);
+              //       //var options = {option_1:"TRYING", option_2: "TRYING", option_3: "TRYING", image_url: response.image_url};
+              //       var users = {user_1: "Trying", user_2: "Trying", user_3: "Trying"};
 
-          document.getElementById('submit-data').addEventListener('click', function(req,res) {
-            let word = document.getElementById("song-data").value;
-            call_ajax('\word',
-              {userID: userID, songID: songID, username: username,
-              name: name, views: popularity, word: word}, false);
-            // $.ajax({
-            //   url: '\word',
-            //   data: {
-            //     userID: userID,
-            //     songID: songID,
-            //     username: username,
-            //     name: name,
-            //     views: popularity,
-            //     word: word
-            //   },
-            //   async: false,
-            // }) 
-          }, false);
+              //       //optionsPlaceholder.innerHTML = optionsTemplate(options); /*render options*/
+              //       //superusersPlaceholder.innerHTML = superusersTemplate(users);
 
-          document.getElementById('option_1').addEventListener('click',function(req,res){
-            let word = document.getElementById("option_1").innerHTML;
-            call_ajax('\word',
-              {userID: userID, songID: songID, username: username,
-              name: name, views: popularity, word: word}, false);
-            // $.ajax({
-            //   url: '\word',
-            //   data: {
-            //     userID: userID,
-            //     songID: songID,
-            //     username: username,
-            //     name: name,
-            //     views: popularity,
-            //     word: word
-            //   },
-            //   async: false,
-            // })
-          });
+              //       //if(word.length >=3)
+              //       //{
+              //       //alert(words[0]); 
+              //       //var options = {option_1: words[0], option_2: "TRYING", option_3: "TRYING", image_url: response.image_url};
+              //       //}
 
-          document.getElementById('option_2').addEventListener('click',function(req,res){
-            let word = document.getElementById("option_2").innerHTML;
-            call_ajax('\word',
-              {userID: userID, songID: songID, username: username,
-              name: name, views: popularity, word: word}, false);
-            // $.ajax({
-            //   url: '\word',
-            //   data: {
-            //     userID: userID,
-            //     songID: songID,
-            //     username: username,
-            //     name: name,
-            //     views: popularity,
-            //     word: word
-            //   },
-            //   async: false,
-            // })
-          });
+              //       var len = words.lenght;
+              //       if(len == 0){
+              //         var options = {option_1: "-", option_2: "-", option_3: "-", image_url: response.image_url};
+              //         document.getElementById('option_1').style.display = "none";
+              //         document.getElementById("option_2").style.display = "none";
+              //         document.getElementById("option_3").style.display = "none";
+              //       }
+              //       if(len == 1){
+              //         var options = {option_1: words[0], option_2: "-", option_3: "-", image_url: response.image_url};
+              //         document.getElementById("option_2").style.display = "none";
+              //         document.getElementById("option_3").style.display = "none";
+              //       }
+              //       if(len == 2){
+              //         var options = {option_1: words[0], option_2: words[1], option_3: "-", image_url: response.image_url};
+              //         document.getElementById("option_3").style.display = "none";
+              //       }
+              //       else{
+              //         var options = {option_1: words[0], option_2: words[1], option_3: words[2], image_url: response.image_url};
+              //       }
 
-          document.getElementById('option_3').addEventListener('click',function(req,res){
-            let word = document.getElementById("option_3").innerHTML;
-            call_ajax('\word',
-              {userID: userID, songID: songID, username: username,
-              name: name, views: popularity, word: word}, false);
-            // $.ajax({
-            //   url: '\word',
-            //   data: {
-            //     userID: userID,
-            //     songID: songID,
-            //     username: username,
-            //     name: name,
-            //     views: popularity,
-            //     word: word
-            //   },
-            //   async: false,
-            // })
-          }, false);
+              //       optionsPlaceholder.innerHTML = optionsTemplate(options); /*render options*/
+
+              //       //else
+              //       //{
+              //       //document.getElementById("options").style.display = "none";
+              //       /*hide options*/
+              //       //}
+
+              //       var users_arr = get_super_users(); /*need to render top 3 on the screen- Grabois
+              //       problem is that we keep id's and not name*/
+              //       $('#login').hide();
+              //       $('#loggedin').show();
+              //     }
+              // });
+            }, false);
+
+            document.getElementById('submit-data').addEventListener('click', function (req, res) {
+              let word = document.getElementById("song-data").value;
+              call_ajax('\word',
+                {
+                  userID: userID, songID: songID, username: username,
+                  name: name, views: popularity, word: word
+                }, false);
+              // $.ajax({
+              //   url: '\word',
+              //   data: {
+              //     userID: userID,
+              //     songID: songID,
+              //     username: username,
+              //     name: name,
+              //     views: popularity,
+              //     word: word
+              //   },
+              //   async: false,
+              // }) 
+            }, false);
+
+            document.getElementById('option_1').addEventListener('click', function (req, res) {
+              let word = document.getElementById("option_1").innerHTML;
+              call_ajax('\word',
+                {
+                  userID: userID, songID: songID, username: username,
+                  name: name, views: popularity, word: word
+                }, false);
+              // $.ajax({
+              //   url: '\word',
+              //   data: {
+              //     userID: userID,
+              //     songID: songID,
+              //     username: username,
+              //     name: name,
+              //     views: popularity,
+              //     word: word
+              //   },
+              //   async: false,
+              // })
+            });
+
+            document.getElementById('option_2').addEventListener('click', function (req, res) {
+              let word = document.getElementById("option_2").innerHTML;
+              call_ajax('\word',
+                {
+                  userID: userID, songID: songID, username: username,
+                  name: name, views: popularity, word: word
+                }, false);
+              // $.ajax({
+              //   url: '\word',
+              //   data: {
+              //     userID: userID,
+              //     songID: songID,
+              //     username: username,
+              //     name: name,
+              //     views: popularity,
+              //     word: word
+              //   },
+              //   async: false,
+              // })
+            });
+
+            document.getElementById('option_3').addEventListener('click', function (req, res) {
+              let word = document.getElementById("option_3").innerHTML;
+              call_ajax('\word',
+                {
+                  userID: userID, songID: songID, username: username,
+                  name: name, views: popularity, word: word
+                }, false);
+              // $.ajax({
+              //   url: '\word',
+              //   data: {
+              //     userID: userID,
+              //     songID: songID,
+              //     username: username,
+              //     name: name,
+              //     views: popularity,
+              //     word: word
+              //   },
+              //   async: false,
+              // })
+            }, false);
 
           } else {
-              // render initial screen
-              $('#login').show();
-              $('#loggedin').hide();
+            // render initial screen
+            $('#login').show();
+            $('#loggedin').hide();
           }
         }
       });
     </script>
-    
 </body>
 </html>
