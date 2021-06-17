@@ -416,7 +416,7 @@
             var song_data = call_ajax('\\song_render',
               { 'pos': pos, access_token: access_token },
               false);
-
+            alert(song_data);
             userProfilePlaceholder.innerHTML = userProfileTemplate(song_data);
             songID = song_data.songID;
             popularity = song_data.popularity;
@@ -564,7 +564,7 @@
               var song_data = call_ajax('\\song_render',
                 { 'pos': pos, access_token: access_token },
                 false);
-
+              alert(song_data);
               userProfilePlaceholder.innerHTML = userProfileTemplate(song_data);
               songID = song_data.songID;
               popularity = song_data.popularity;
@@ -679,7 +679,7 @@
 
             document.getElementById('submit-data').addEventListener('click', function (req, res) {
               let word = document.getElementById("song-data").value;
-              call_ajax('\word',
+              call_ajax('\\word',
                 {
                   userID: userID, songID: songID, username: username,
                   name: name, views: popularity, word: word
@@ -700,7 +700,7 @@
 
             document.getElementById('option_1').addEventListener('click', function (req, res) {
               let word = document.getElementById("option_1").innerHTML;
-              call_ajax('\word',
+              call_ajax('\\word',
                 {
                   userID: userID, songID: songID, username: username,
                   name: name, views: popularity, word: word
@@ -721,7 +721,7 @@
 
             document.getElementById('option_2').addEventListener('click', function (req, res) {
               let word = document.getElementById("option_2").innerHTML;
-              call_ajax('\word',
+              call_ajax('\\word',
                 {
                   userID: userID, songID: songID, username: username,
                   name: name, views: popularity, word: word
@@ -742,7 +742,7 @@
 
             document.getElementById('option_3').addEventListener('click', function (req, res) {
               let word = document.getElementById("option_3").innerHTML;
-              call_ajax('\word',
+              call_ajax('\\word',
                 {
                   userID: userID, songID: songID, username: username,
                   name: name, views: popularity, word: word
