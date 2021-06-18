@@ -293,6 +293,7 @@
               user_1_score += option1.value;
               lock_answered = 1;
               socket.emit("answered", {user: User.value, game_id: game_id});
+         
             }
             else
             {
@@ -316,15 +317,9 @@
         lock_answered = 0;
         let songname;
         let popularity;
-        let words;
+        let words = [];
         if(i < 5)
         {
-          //alert(tracks[i]);
-          let song_data = call_ajax('\\get_track_name',
-          {songID:tracks[i],access_token: access_token},
-          false);
-          songname = song_data["songname"];
-          popularity = song_data["popularity"];
           
           // $.ajax({
 
@@ -340,8 +335,6 @@
           //       }
           // });
 
-          Title.innerHTML = songname;
-
           // $.ajax({
           //             url: '\get_offers',
           //             data: {
@@ -354,12 +347,24 @@
           //                words = response.words;
           //              }
           // })
-
-          let offers = call_ajax('\\get_offers',
-          {songID: tracks[i], name: songname, views: popularity},
-          false);
-          words = offers.words;
-
+          while(words.length < 2)
+          {
+          
+            let song_data = call_ajax('\\get_track_name',
+            {songID:tracks[i],access_token: access_token},
+            false);
+            songname = song_data["songname"];
+            popularity = song_data["popularity"];
+          
+            let offers = call_ajax('\\get_offers',
+            {songID: tracks[i], name: songname, views: popularity},
+            false);
+            i += 1;
+            words = offers.words;
+            alert(i);
+          }
+         
+          Title.innerHTML = songname;
           option1.innerHTML = words[0]; 
           option2.innerHTML = words[1];
 

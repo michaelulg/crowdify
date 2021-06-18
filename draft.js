@@ -224,8 +224,8 @@ app1.get('/song_render',function(req,res) /*gets a random position in the recent
 
     // use the access token to access the Spotify Web API
     request.get(options, function(error, response, body) {
-    console.log("body:")
-    console.log(body.items[0]);
+    //console.log("body:")
+    //console.log(body.items[0]);
     songID = body.items[pos].track.id;
     /*console.log(songID);*/
     songname = body.items[pos].track.name;
@@ -236,7 +236,7 @@ app1.get('/song_render',function(req,res) /*gets a random position in the recent
       json: true
     };
     request.get(options, function(error, response, body) {
-      console.log('https://api.spotify.com/v1/tracks/'+songID);
+      //console.log('https://api.spotify.com/v1/tracks/'+songID);
       image_url = body.album.images[1].url;
       res.send({image_url:image_url, songname: songname, songID: songID, popularity: popularity})
     });
@@ -367,7 +367,7 @@ try
 
     }
   });
-  console.log(curr_access_token);
+  //console.log(curr_access_token);
   res.redirect("http://localhost:3000?access_token="+curr_refresh_token+"&refresh_token="+curr_access_token);
 });
 
@@ -410,8 +410,8 @@ app2.get("/get_track_name",function(req,res)
 
   var curr_access_token = req.query.access_token;
   console.log("IN GET_TRACK_NAME");
-  console.log(curr_access_token);
-  console.log(req.query.songID);
+  //console.log(curr_access_token);
+  //console.log(req.query.songID);
   var songID = req.query.songID;
   var songname;
   var popularity;
@@ -426,7 +426,7 @@ app2.get("/get_track_name",function(req,res)
       json: true
     };
     request.get(options, function(error, response, body) {
-      console.log(body);
+      //console.log(body);
       // console.log('https://api.spotify.com/v1/tracks/'+songID);
       image_url = body.album.images[1].url;
       songname = body.name; 
@@ -445,7 +445,7 @@ app2.get("/get_track_name",function(req,res)
 app1.get("/get_track_name",function(req,res)
 {
   var curr_access_token = req.query.access_token;
-  console.log(curr_access_token);
+  //console.log(curr_access_token);
   var songID = req.query.songID;
   var songname;
   var popularity;
@@ -461,7 +461,7 @@ app1.get("/get_track_name",function(req,res)
     };
     request.get(options, function(error, response, body) {
       // console.log('https://api.spotify.com/v1/tracks/'+songID);
-      console.log(body);
+      //console.log(body);
       image_url = body.album.images[1].url;
       songname = body.name; 
       popularity = body.popularity; 
@@ -498,6 +498,9 @@ app2.get("/get_offers", function(req,res)
   let songID = req.query.songID;
   let name = req.query.name;
   let views = req.query.views;
+  console.log("\n\n\n"+name+"\n\n\n");
+  
+  console.log("\n\n\n"+views+"\n\n\n");
   funcs.get_offers(songID,name,views).then(function(result)
   {
     res.send(
@@ -568,6 +571,7 @@ app1.get("/word",function(req,res)
 
 app2.get("/word",function(req,res)
 {
+  console.log("\n UserID:" + req.query.userID + "\n");
   let userID = req.query.userID;
   let songID = req.query.songID;
   let username = req.query.username;
@@ -600,6 +604,7 @@ app2.get("/choose/word",function(req,res)
 
 app1.get("/get_weight", function(req,res)
 {
+  console.log("inside get_wieght");
   let weight;
   let word = req.query.word;
   let songID = req.query.songID;
@@ -615,7 +620,9 @@ app1.get("/get_weight", function(req,res)
 
 app2.get("/get_weight", function(req,res)
 {
+  console.log("\ninside get_wieght\n");
   let word = req.query.word;
+  console.log("\n\n\n"+word+"\n\n\n");
   let songID = req.query.songID;
   funcs.get_weight(songID,word).then(function(result)
    {
