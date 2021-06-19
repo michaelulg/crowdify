@@ -31,7 +31,7 @@ const stop_words = ["i", "me", "my", "myself", "we", "our", "ours", "ourselves",
 
 async function run_query(query, mesg){
 
-    var driver = neo4j.driver('bolt://localhost', neo4j.auth.basic('neo4j', 'michaelul'));
+    let driver = neo4j.driver('bolt://localhost', neo4j.auth.basic('neo4j', '12345'));
 	let session = driver.session();
 	let answer;
 
@@ -396,12 +396,14 @@ async function get_offers(songID, name, views){
 	});
 
 	let len = words.length;
+	console.log(words);
 	if(len > 4){
 		return (words.slice(0,3)).concat(words.slice(len-2, len));
 	}
 	else if(len == 4){
 		return (words.slice(0,3)).concat(words.slice(len-1, len));
 	}
+	
 	return words;
 }
 
@@ -694,21 +696,29 @@ async function init_exp(){
 	await add_word("1", "The Creator", "6", "Stereo Hearts", 550422993, "sterio");
 	await add_word("1", "The Creator", "7", "Alien", 11343207, "around we go");
 	await add_word("1", "The Creator", "7", "Alien", 11343207, "filling like an alien");
+	await add_word("1", "The Creator", "8", "Where Is The Love?", 686588046, "CIA");
+	await add_word("1", "The Creator", "8", "Where Is The Love?", 686588046, "terrorists");
+	await add_word("1", "The Creator", "9", "We Are The Champions", 85644463, "Queen");
+	await add_word("1", "The Creator", "9", "We Are The Champions", 85644463, "winners");
+	await add_word("1", "The Creator", "10", "We Will Rock You", 9460174, "rock");
+	await add_word("1", "The Creator", "10", "We Will Rock You", 9460174, "queen");
 }
 
 //============================= Test ==============================
 
 async function Test(){
+	// add_word: ( userID, username, songID, name, views, word )
 	//await init_exp();
-	//console.log(await search("we around"));
+	//await add_word("1tix9n43307ieijvibvwodhj9", "yonatan", "54bFM56PmE4YLRnqpW6Tha", "dvv", 1313, "therefore");
+	//console.log(await search("love"));
 	//console.log(await get_offers(5, "crazy", 2001));
 	//console.log(await popular_songs());
-	//console.log(await get_weight("1", "ninet"));
+	//console.log(await get_weight("5qNh5WtzMbfpSj2jLlBkoD", "power"));
 }
 
- //Test().then(function(result){
- //	console.log('\nDone test.\n'); 
- //});
+// Test().then(function(result){
+// 	console.log('\nDone test.\n'); 
+// });
 
 module.exports.get_offers = get_offers;
 module.exports.add_word = add_word;
@@ -716,6 +726,8 @@ module.exports.search = search;
 module.exports.popular_songs = popular_songs;
 module.exports.get_weight = get_weight;
 module.exports.get_superusers = get_superusers;
+module.exports.autocorrect = autocorrect;
+
 
 
 
