@@ -549,7 +549,7 @@ console.log('inside get_superusers in app2');
       }
     )
   })
-  res.send({});
+  
 })
 
 app2.get("/get_superusers", function(req,res)
@@ -563,7 +563,7 @@ app2.get("/get_superusers", function(req,res)
       }
     )
   })
-  res.send({});
+  
 })
 
 

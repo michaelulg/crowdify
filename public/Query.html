@@ -347,7 +347,6 @@
     <script src="js/personalgame.js"></script>
 
     <script>
-      alert("HO");
       /**
        * Obtains parameters from the hash of the URL
        * @return Object
@@ -441,8 +440,38 @@
           var offers = call_ajax('\\get_offers',
             { songID: songID, name: name, views: popularity },
             false);
-          $('#login').hide();
-          $('#loggedin').show();
+          
+          words = offers.words;
+          var len = words.lenght;
+          var options;
+          if (len == 0) {
+            options = { option_1: "-", option_2: "-", option_3: "-", image_url: song_data.image_url };
+            document.getElementById('option_1').style.display = "none";
+            document.getElementById("option_2").style.display = "none";
+            document.getElementById("option_3").style.display = "none";
+          }
+          if (len == 1) {
+            options = { option_1: words[0], option_2: "-", option_3: "-", image_url: song_data.image_url };
+            document.getElementById("option_2").style.display = "none";
+            document.getElementById("option_3").style.display = "none";
+          }
+          if (len == 2) {
+            options = { option_1: words[0], option_2: words[1], option_3: "-", image_url: song_data.image_url };
+            document.getElementById("option_3").style.display = "none";
+          }
+          else {
+            options = { option_1: words[0], option_2: words[1], option_3: words[2], image_url: song_data.image_url };
+          }
+            
+          optionsPlaceholder.innerHTML = optionsTemplate(options); /*render options*/
+          
+          var super_users;
+          super_users = call_ajax('\\get_superusers', {}, false).super_users;
+          len = super_users.lenght-1;
+          var users = { user_1: super_users[0]['username'], user_2: super_users[0]['username'], user_3: super_users[0]['username'] };
+          //var users = { user_1: super_users[0]['username'], user_2: super_users[1]['username'], user_3: super_users[2]['username'] };
+          superusersPlaceholder.innerHTML = superusersTemplate(users);
+
           document.getElementById('pick-new-song').addEventListener('click', function () {
 
             pos = Math.floor((Math.random() * 10 + 1));
@@ -461,32 +490,30 @@
               false);
 
             words = offers.words;
-            alert(words);
             var len = words.lenght;
             var options;
             if (len == 0) {
-              options = { option_1: "-", option_2: "-", option_3: "-", image_url: response.image_url };
-              document.getElementById('option_1').style.display = "none";
+              options = { option_1: "-", option_2: "-", option_3: "-", image_url: song_data.image_url };
+              document.getElementById("option_1").style.display = "none";
               document.getElementById("option_2").style.display = "none";
               document.getElementById("option_3").style.display = "none";
             }
             if (len == 1) {
-              options = { option_1: words[0], option_2: "-", option_3: "-", image_url: response.image_url };
+              options = { option_1: words[0], option_2: "-", option_3: "-", image_url: song_data.image_url };
               document.getElementById("option_2").style.display = "none";
               document.getElementById("option_3").style.display = "none";
             }
             if (len == 2) {
-              options = { option_1: words[0], option_2: words[1], option_3: "-", image_url: response.image_url };
+              options = { option_1: words[0], option_2: words[1], option_3: "-", image_url: song_data.image_url };
               document.getElementById("option_3").style.display = "none";
             }
             else {
-              options = { option_1: words[0], option_2: words[1], option_3: words[2], image_url: response.image_url };
+              options = { option_1: words[0], option_2: words[1], option_3: words[2], image_url: song_data.image_url };
             }
-
+            
             optionsPlaceholder.innerHTML = optionsTemplate(options); /*render options*/
           }, false);
-          $('#login').hide();
-          $('#loggedin').show();
+
           document.getElementById('submit-data').addEventListener('click', function (req, res) {
             let word = document.getElementById("song-data").value;
             call_ajax('\\word',
@@ -497,8 +524,9 @@
              
           });
 
-          document.getElementById('option_1').addEventListener('click', function (req, res) {
+          document.getElementById("option_1").addEventListener('click', function (req, res) {
             let word = document.getElementById("option_1").innerHTML;
+            alert("Here");
             call_ajax('\\word',
               {
                 userID: userID, songID: songID, username: username,
@@ -507,8 +535,9 @@
             
           });
 
-          document.getElementById('option_2').addEventListener('click', function (req, res) {
+          document.getElementById("option_2").addEventListener('click', function (req, res) {
             let word = document.getElementById("option_2").innerHTML;
+            alert("Here");
             call_ajax('\\word',
               {
                 userID: userID, songID: songID, username: username,
@@ -517,8 +546,9 @@
            
           });
 
-          document.getElementById('option_3').addEventListener('click', function (req, res) {
+          document.getElementById("option_3").addEventListener('click', function (req, res) {
             let word = document.getElementById("option_3").innerHTML;
+            alert("Here");
             call_ajax('\\word',
               {
                 userID: userID, songID: songID, username: username,
