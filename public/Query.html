@@ -278,14 +278,6 @@
     </div> <!-- end of row -->
     </script>
 
-    <script id="oauth-template" type="text/x-handlebars-template">
-      <!--<h2>oAuth info</h2>-->
-    <!--<dl class="dl-horizontal">
-        <dt>Access token</dt><dd class="text-overflow">{{access_token}}</dd>
-        <dt>Refresh token</dt><dd class="text-overflow">{{refresh_token}}</dd>-->
-    </dl>
-    </script>
-
     <script id="suggested-words-template" type="text/x-handlebars-template">
       <div class="row">
         <div class="col-lg-12">
@@ -347,11 +339,35 @@
     <script src="js/personalgame.js"></script>
 
     <script>
+
+      /* *******************************************  Vriables ********************************************* */
+      
+      var userID;
+      var songID;
+      var popularity;
+      var username;
+      var name; /*song name*/
+
+      var userProfileSource = document.getElementById('user-profile-template').innerHTML,
+        userProfileTemplate = Handlebars.compile(userProfileSource),
+        userProfilePlaceholder = document.getElementById('user-profile');
+
+      var optionsSource = document.getElementById('suggested-words-template').innerHTML,
+        optionsTemplate = Handlebars.compile(optionsSource),
+        optionsPlaceholder = document.getElementById('options');
+
+      var superusersSource = document.getElementById('super-users-template').innerHTML,
+        superusersTemplate = Handlebars.compile(superusersSource),
+        superusersPlaceholder = document.getElementById('super-users');
+        
+      /* *************************************************************************************************** */
+      
+      /* ************************************** Auxiliary Functions **************************************** */
+
       /**
-       * Obtains parameters from the hash of the URL
-       * @return Object
+       * @param window url
+       * @return hash parameters- dictionary of parameters
        */
-      var num = 1;
       function getHashParams() {
         var hashParams = {};
         var e, r = /([^&;=]+)=?([^&;]*)/g,
@@ -362,8 +378,15 @@
         return hashParams;
       }
 
+      /**
+       * @param url for ajax
+       * @param data for ajax
+       * @param async boolean option for ajax
+       * @return ajax response from the specified url
+       */
       function call_ajax(url, data, async) {
         let res;
+        
         $.ajax({
           url: url,
           data: data,
@@ -376,44 +399,51 @@
         return res;
       }
 
-      var userID;
-      var songID;
-      var popularity;
-      var username;
-      var name; /*song's name*/
-
-      var userProfileSource = document.getElementById('user-profile-template').innerHTML,
-        userProfileTemplate = Handlebars.compile(userProfileSource),
-        userProfilePlaceholder = document.getElementById('user-profile');
-
-      var oauthSource = document.getElementById('oauth-template').innerHTML,
-        oauthTemplate = Handlebars.compile(oauthSource),
-        oauthPlaceholder = document.getElementById('oauth');
-
-      var optionsSource = document.getElementById('suggested-words-template').innerHTML,
-        optionsTemplate = Handlebars.compile(optionsSource),
-        optionsPlaceholder = document.getElementById('options');
-
-      var superusersSource = document.getElementById('super-users-template').innerHTML,
-        superusersTemplate = Handlebars.compile(superusersSource),
-        superusersPlaceholder = document.getElementById('super-users');
-
-
-      var params = getHashParams();
+      /**
+       * @param words to render (the offers list for a given song)
+       * @param image url for the song
+       * @return no return value. render the options for the current queried song
+       */
+      function render_offers(words, image_url)
+      {
+        var len = words.lenght;
+        var options;
+        
+        if (len == 0) {
+          options = { option_1: "-", option_2: "-", option_3: "-", image_url: image_url };
+          document.getElementById('option_1').style.display = "none";
+          document.getElementById("option_2").style.display = "none";
+          document.getElementById("option_3").style.display = "none";
+        }
+        if (len == 1) {
+          options = { option_1: words[0], option_2: "-", option_3: "-", image_url: image_url };
+          document.getElementById("option_2").style.display = "none";
+          document.getElementById("option_3").style.display = "none";
+        }
+        if (len == 2) {
+          options = { option_1: words[0], option_2: words[1], option_3: "-", image_url: image_url };
+          document.getElementById("option_3").style.display = "none";
+        }
+        else {
+          options = { option_1: words[0], option_2: words[1], option_3: words[2], image_url: image_url };
+        }
+            
+        optionsPlaceholder.innerHTML = optionsTemplate(options); /*render options*/
+      }
+      
+      /* *************************************************************************************************** */
+      
+      var params = getHashParams(); /*get parameters from url*/
       var access_token = params.access_token,
         refresh_token = params.refresh_token,
         error = params.error;
-
+      
       if (error) {
         alert('There was an error during the authentication');
       } else {
+
         if (access_token) {
-          // render oauth info
-          oauthPlaceholder.innerHTML = oauthTemplate({
-            access_token: access_token,
-            refresh_token: refresh_token
-          });
-          var pos = Math.floor((Math.random() * 10 + 1));
+  
           $.ajax({ /*init user_id and user_name*/
             url: 'https://api.spotify.com/v1/me',
             headers: {
@@ -423,10 +453,17 @@
             success: function (response) {
               userID = response.id;
               username = response.display_name;
+              if(userID == undefined)
+              {
+                $('#login').show();
+                $('#loggedin').hide();
+              }
             }
-
           });
-
+          
+          /* ********** Get Song Data for Random Position in the Recently Played Tracks List ***************** */
+          
+          var pos = Math.floor((Math.random() * 10 + 1));
           var song_data = call_ajax('\\song_render',
             { 'pos': pos, access_token: access_token },
             false);
@@ -436,42 +473,31 @@
           popularity = song_data.popularity;
           name = song_data.songname;
           let words;
-
+          
+          /* ************************************************************************************************* */
+          
+          /* ******************************** Get Offers for the Current Song ******************************** */
+          
           var offers = call_ajax('\\get_offers',
             { songID: songID, name: name, views: popularity },
             false);
           
           words = offers.words;
-          var len = words.lenght;
-          var options;
-          if (len == 0) {
-            options = { option_1: "-", option_2: "-", option_3: "-", image_url: song_data.image_url };
-            document.getElementById('option_1').style.display = "none";
-            document.getElementById("option_2").style.display = "none";
-            document.getElementById("option_3").style.display = "none";
-          }
-          if (len == 1) {
-            options = { option_1: words[0], option_2: "-", option_3: "-", image_url: song_data.image_url };
-            document.getElementById("option_2").style.display = "none";
-            document.getElementById("option_3").style.display = "none";
-          }
-          if (len == 2) {
-            options = { option_1: words[0], option_2: words[1], option_3: "-", image_url: song_data.image_url };
-            document.getElementById("option_3").style.display = "none";
-          }
-          else {
-            options = { option_1: words[0], option_2: words[1], option_3: words[2], image_url: song_data.image_url };
-          }
-            
-          optionsPlaceholder.innerHTML = optionsTemplate(options); /*render options*/
+          render_offers(words, song_data.image_url);
+          
+          /* ************************************************************************************************* */
+          
+          /* ************************************** Render Super-Users *************************************** */
           
           var super_users;
           super_users = call_ajax('\\get_superusers', {}, false).super_users;
-          len = super_users.lenght-1;
           var users = { user_1: super_users[0]['username'], user_2: super_users[0]['username'], user_3: super_users[0]['username'] };
           //var users = { user_1: super_users[0]['username'], user_2: super_users[1]['username'], user_3: super_users[2]['username'] };
           superusersPlaceholder.innerHTML = superusersTemplate(users);
+          
+          /* ************************************************************************************************* */
 
+          /* ************************************* Event Listeners ******************************************* */
           document.getElementById('pick-new-song').addEventListener('click', function () {
 
             pos = Math.floor((Math.random() * 10 + 1));
@@ -488,40 +514,19 @@
             var offers = call_ajax('\\get_offers',
               { songID: songID, name: name, views: popularity },
               false);
-
-            words = offers.words;
-            var len = words.lenght;
-            var options;
-            if (len == 0) {
-              options = { option_1: "-", option_2: "-", option_3: "-", image_url: song_data.image_url };
-              document.getElementById("option_1").style.display = "none";
-              document.getElementById("option_2").style.display = "none";
-              document.getElementById("option_3").style.display = "none";
-            }
-            if (len == 1) {
-              options = { option_1: words[0], option_2: "-", option_3: "-", image_url: song_data.image_url };
-              document.getElementById("option_2").style.display = "none";
-              document.getElementById("option_3").style.display = "none";
-            }
-            if (len == 2) {
-              options = { option_1: words[0], option_2: words[1], option_3: "-", image_url: song_data.image_url };
-              document.getElementById("option_3").style.display = "none";
-            }
-            else {
-              options = { option_1: words[0], option_2: words[1], option_3: words[2], image_url: song_data.image_url };
-            }
-            
-            optionsPlaceholder.innerHTML = optionsTemplate(options); /*render options*/
+              words = offers.words;
+              render_offers(words, song_data.image_url);
           }, false);
 
           document.getElementById('submit-data').addEventListener('click', function (req, res) {
             let word = document.getElementById("song-data").value;
+
             call_ajax('\\word',
               {
                 userID: userID, songID: songID, username: username,
                 name: name, views: popularity, word: word
               }, false);
-             
+              document.getElementById("song-data").value = "";
           });
 
           document.getElementById("option_1").addEventListener('click', function (req, res) {
@@ -556,6 +561,8 @@
               }, false);
             
           }, false);
+          /* ************************************************************************************************* */
+
 
         } else {
           // render initial screen

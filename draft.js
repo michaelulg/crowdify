@@ -29,7 +29,7 @@ var session2 = driver.session();
 * @return {string} The generated string
 */
  
-var popular_songs; /*used for the game*/
+var popular_songs = []; /*used for the game*/
 var flag = ""; /*without this flag, which functions as a lock, the connection scrtipt happens reapetedly*/
 var currently_playing = {};
 var participents = []; /*information about participents that wish to play the game*/
@@ -50,7 +50,9 @@ var stateKey = 'spotify_auth_state';
  
 var app1 = express();
 var app2 = express();
+
 /* ********************************** login page, home page, Query and search ********************************* */
+
 app1.use('dev',function (req, res, next){});
 app1.use(express.static(__dirname + '/public')) 
   .use(cors())
@@ -64,6 +66,7 @@ app1.use('/Query', express.static(__dirname + '/public/Query.html'))
 app1.use('/search', express.static(__dirname + '/public/search.html'))
   .use(cors())
   .use(cookieParser());
+/* *********************************************************************************************************** */
 
 /* ********************************** Game Page ********************************* */
 
@@ -161,11 +164,12 @@ app1.get('/callback', function(req, res) {
           }));
       }
     });
-
+    
     funcs.popular_songs().then(function(result) /*initiate popular songs*/
     {
       popular_songs = result;
     })
+    
   }
 });
 
@@ -269,6 +273,7 @@ app1.get('/Game', (req, res) => {
   var user_id;
   var username;
   var recent_tracks;
+  
 try
   {
     var options = {
@@ -298,7 +303,7 @@ try
   {
     res.redirect('/login');
   }
-
+  let game_over = 0;
   io.on('connection', (socket) => {
     if(flag != socket.id)
     {
@@ -329,10 +334,14 @@ try
         {
           delete currently_playing[other_player];
           delete currently_playing[socket.id];
-          console.log(currently_playing);
+          //console.log(currently_playing);
           var room = Array.from(io.sockets.adapter.sids.get(other_player)).filter(item => item != other_player)[0];
         }
-        socket.to(room).emit("Exit",{}); /*other player has logged out before endgame*/
+        
+        if(game_over != 1)
+        {
+          socket.to(room).emit("Exit",{}); /*other player has logged out before endgame*/
+        }
       });
       socket.on("EndGame",function(data) 
       {
@@ -353,6 +362,7 @@ try
             winner = 2;
           }
           console.log("\n Goodbye now \n");
+          game_over = 1;
           io.to(data.game_id).emit("Exit", {user_1_score: games_arr[data.game_id-1].answers[0] , user_2_score: games_arr[data.game_id-1].answers[1], winner:winner});
         }
       })
@@ -488,7 +498,9 @@ app1.get("/get_track_name",function(req,res)
   }
 });
 
-/************************************ call function of the neo4j database ************************************** */
+/******************************** Call Function from the personalgame.js File ********************************** */
+
+/*function: get_offers*/
 app1.get("/get_offers", function(req,res)
 {
   let songID = req.query.songID;
@@ -504,6 +516,7 @@ app1.get("/get_offers", function(req,res)
   })
 });
 
+/*function: get_offers*/
 app2.get("/get_offers", function(req,res)
 {
   console.log('inside get_offers');
@@ -523,7 +536,7 @@ app2.get("/get_offers", function(req,res)
   })
 });
 
-
+/*function: search*/
 app1.get("/search", function(req,res)
 {
   let string = req.query.string;
@@ -537,7 +550,7 @@ app1.get("/search", function(req,res)
   })
 });
 
-
+/*function: get_superusers*/
 app1.get("/get_superusers", function(req,res)
 {
 console.log('inside get_superusers in app2');
@@ -552,21 +565,7 @@ console.log('inside get_superusers in app2');
   
 })
 
-app2.get("/get_superusers", function(req,res)
-{
-  console.log('inside get_superusers in app');
-  funcs.get_superusers().then(function(result)
-  {
-    res.send(
-      {
-        super_users: result
-      }
-    )
-  })
-  
-})
-
-
+/*function: add_word*/
 app1.get("/word",function(req,res)
 {
   let userID = req.query.userID;
@@ -581,6 +580,7 @@ app1.get("/word",function(req,res)
   res.send({});
 })
 
+/*function: add_word*/
 app2.get("/word",function(req,res)
 {
   console.log("\n UserID:" + req.query.userID + "\n");
@@ -594,42 +594,7 @@ app2.get("/word",function(req,res)
   res.send({});
 })
 
-
-app1.get("/choose/word",function(req,res)
-{
-  let userID = req.query.userID;
-  let songID = req.query.songID;
-  let word = req.query.word;
-  funcs.add_word(userID,songID,word);
-  res.send({});
-})
-
-app2.get("/choose/word",function(req,res)
-{
-  let userID = req.query.userID;
-  let songID = req.query.songID;
-  let word = req.query.word;
-  funcs.add_word(userID,songID,word);
-  res.send({});
-})
-
-
-app1.get("/get_weight", function(req,res)
-{
-  console.log("inside get_wieght");
-  let weight;
-  let word = req.query.word;
-  let songID = req.query.songID;
-  funcs.get_weight(songID,word).then(function(result)
-  {
-    res.send(
-      {
-        weight: result
-      }
-    )
-  })
-});
-
+/*functionL get_weigth*/
 app2.get("/get_weight", function(req,res)
 {
   console.log("\ninside get_wieght\n");
@@ -645,6 +610,7 @@ app2.get("/get_weight", function(req,res)
      )
    })
 });
+
 /*************************************************************************************************************** */
 
 console.log('Listening on 8888');
