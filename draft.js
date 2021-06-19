@@ -4,20 +4,6 @@
  * Here we define 2 apps, one for the game (on port 3000) and the other for the rest of the website (port 8888)
  */
 
-<<<<<<< HEAD
- var express = require('express'); // Express web server framework
- var request = require('request'); // "Request" library
- var cors = require('cors');
- var neo4j = require('neo4j-driver');
- var querystring = require('querystring');
- var cookieParser = require('cookie-parser'); //more cookies?
- var fs = require('fs'); 
- var path = require('path');
- var url = require('url');
- var funcs = require('./public/js/personalgame.js');
-
- const { response } = require('express');
-=======
 var express = require('express'); 
 var request = require('request'); 
 var cors = require('cors');
@@ -28,7 +14,6 @@ require('path');
 var url = require('url');
 var neo4j = require('neo4j-driver');
 var funcs = require('./public/js/personalgame');
->>>>>>> 7896bd133ffb36986f07be5775f901b5759d6d49
  
 var client_id = '8dff2688f87941fbba7b44c3ec6ce680'; // client id, allocated for our registered project in spotify
 var client_secret = '9ba69741607c4d709bac93513ebbdd99'; // secret id
@@ -89,38 +74,6 @@ app2.use('/Game_page', express.static(__dirname+'/public/Game.html'))
   .use(cors())
   .use(cookieParser());
   
-<<<<<<< HEAD
-
-    var app2 = express();
-    
-    app2.get('/', (req, res) => {
-      curr_access_token = url.parse(req.url,true).query.access_token;
-      curr_access_token = url.parse(req.url,true).query.refresh_token;
-      
-      res.redirect("/Game_page#access_token="+access_token);
-    });
-    const http = require('http');
-    const server = http.createServer(app2);
-    const { Server } = require("socket.io");
-    const io = new Server(server);
-
-    server.listen(3000, () => {
-      console.log('listening on *:3000');
-    });
-
-    app2.use(express.static(__dirname + '/public')) //integrate the index.html file in /public with draft.js
-    .use(cors())
-    .use(cookieParser());
-    
-    app2.use('/Game_page', express.static(__dirname+'/public/Game.html'))
-    .use(cors())
-    .use(cookieParser());
-
- app.get('/login', function(req, res) { //the html adresses the "/login" thingi and it goes here! cool 
- 
-   var state = generateRandomString(16); //what is that?
-   res.cookie(stateKey, state);
-=======
 const http = require('http');
 const server = http.createServer(app2);
 const { Server } = require("socket.io");
@@ -140,7 +93,6 @@ app2.get('/', (req, res) => {
 * The login bottun from the index page redirects here, where the authorization taked place
 */ 
 app1.get('/login', function(req, res) { 
->>>>>>> 7896bd133ffb36986f07be5775f901b5759d6d49
  
   var state = generateRandomString(16);
   res.cookie(stateKey, state);
@@ -434,24 +386,6 @@ try
         user_1_name: user_1['username'], user_2_name: user_2['username'],
         tracks: popular_songs, game_id: games_num});  
       }
-<<<<<<< HEAD
-      });
-    // io.on('answered',(socket) =>
-    // {
-    //   console.log("Answered");
-    //   var cell =  games_arr[data.game_id];
-    //   cell.answers[data.user-1] += 1; /*user with that user id answered*/
-    //   if(cell.answers[0] > 0 && cell.answers[1] > 0)
-    //   {
-    //     cell.answers[0] = 0;
-    //     cell.answers[1] = 0;
-    //     io.to(game_id).emit("NextRound");
-    //   }
-    // })
-  res.redirect("http://localhost:3000#access_token="+curr_access_token+"&refresh_token="+curr_refresh_token);
-});
-=======
->>>>>>> 7896bd133ffb36986f07be5775f901b5759d6d49
 
     }
   });
@@ -478,20 +412,6 @@ app1.get('/refresh_token', function(req, res) {
     json: true
     };
 
-<<<<<<< HEAD
- app.get("/get_search", function(req,res)
- {
-   let string = req.query.string;
-   funcs.search(string).then(function(result)
-   {
-     res.send(
-       {
-         songs: result
-       }
-     )
-   })
- });
-=======
     request.post(authOptions, function(error, response, body) {
     if (!error && response.statusCode === 200) {
       var access_token = body.access_token;
@@ -506,7 +426,6 @@ app1.get('/refresh_token', function(req, res) {
     res.redirect('/login');
   }
 });
->>>>>>> 7896bd133ffb36986f07be5775f901b5759d6d49
 
 app2.get("/get_track_name",function(req,res)
 {
