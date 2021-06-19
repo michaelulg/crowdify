@@ -16,7 +16,7 @@
  var fs = require('fs'); 
  var path = require('path');
  var url = require('url');
- var funcs = require('./public/js/personalgame');
+ var funcs = require('./public/js/personalgame.js');
 
  const { response } = require('express');
  
@@ -77,6 +77,7 @@
   
 
     var app2 = express();
+    
     app2.get('/', (req, res) => {
       curr_access_token = url.parse(req.url,true).query.access_token;
       curr_access_token = url.parse(req.url,true).query.refresh_token;
@@ -92,6 +93,10 @@
       console.log('listening on *:3000');
     });
 
+    app2.use(express.static(__dirname + '/public')) //integrate the index.html file in /public with draft.js
+    .use(cors())
+    .use(cookieParser());
+    
     app2.use('/Game_page', express.static(__dirname+'/public/Game.html'))
     .use(cors())
     .use(cookieParser());
@@ -338,7 +343,7 @@ app.get('/Game', (req, res) => {
     //     io.to(game_id).emit("NextRound");
     //   }
     // })
-  res.redirect("http://localhost:3000?access_token="+curr_access_token+"&refresh_token="+curr_refresh_token);
+  res.redirect("http://localhost:3000#access_token="+curr_access_token+"&refresh_token="+curr_refresh_token);
 });
 
 // function getHashParams() {
@@ -421,7 +426,7 @@ app.get('/Game', (req, res) => {
  });
 
 
- app.get("/search", function(req,res)
+ app.get("/get_search", function(req,res)
  {
    let string = req.query.string;
    funcs.search(string).then(function(result)

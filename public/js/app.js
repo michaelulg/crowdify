@@ -18,7 +18,7 @@ function defaultGrid() {
         event.target.style.backgroundColor = "black";
         let square1 = document.createElement("a");
         square1.innerHTML = "<a id='game'>Game</a>"
-        square1.href = "Game?access_token="+access_token+"&refresh_token="+refresh_token;
+        square1.href = "Game#access_token="+access_token+"&refresh_token="+refresh_token;
 
         event.target.appendChild(square1).className = "square";
         
@@ -81,11 +81,11 @@ function makeColumns(cellNum) {
             var access_token = params.access_token;
             var refresh_token = params.refresh_token;
             let newCell = document.createElement("a");
-            newCell.setAttribute("href", "/Query#access_token="+access_token+ "&refresh_token="+refresh_token);
+            //newCell.setAttribute("href", "/Query#access_token="+access_token+ "&refresh_token="+refresh_token);
             
             pos = Math.floor((Math.random()*urls.length));
 
-            //newCell.setAttribute("href","/Game?access_token="+access_token+"&refresh_token="+refresh_token);
+            newCell.setAttribute("href","/Game#access_token="+access_token+"&refresh_token="+refresh_token);
             newCell.style.cursor = "default";
             
             newCell.setAttribute("style", 
@@ -131,9 +131,9 @@ async function generateSongList() {
     var elem = document.getElementById("search-head");
 
     let song_ids = ["7mEDVrAHDnQJStDo8jKJJm", "7mEDVrAHDnQJStDo8jKJJm", "1ISMa0THMDKFBq2UMfm02e", "63Wv3KNxCfnuUIW988TyIl", "2iRniYXjMHKmwXqA2jYXP7", "2iRniYXjMHKmwXqA2jYXP7"];
-    let string = decodeURI(location.search.substring(1)).split('&')[0];
-    /*$.ajax({
-        url: '\search',
+    let string = decodeURI(location.search.substring(1)).split('#')[0];
+    $.ajax({
+        url: '\get_search',
         data: {
             string : string
         },
@@ -142,7 +142,7 @@ async function generateSongList() {
         }
     })
 
-    let songs = song_ids; */
+    //let songs = song_ids; 
     let songs = song_ids;
 
     let songname;
