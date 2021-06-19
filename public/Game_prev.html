@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
+  <head>
+    
+
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
@@ -14,84 +16,54 @@
     <!-- Styles -->
     <link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600&display=swap" rel="stylesheet">
-    <link href="css/bootstrap.css" rel="stylesheet" type="text/css">
+    <link href="css/bootstrap.css" rel="stylesheet">
     <link href="css/fontawesome-all.min.css" rel="stylesheet">
     <link href="css/swiper.css" rel="stylesheet">
     <link href="css/magnific-popup.css" rel="stylesheet">
-    <link href="css/styles.css" rel="stylesheet" type="text/css">
+    <link href="css/styles.css" rel="stylesheet">
 
     <!-- Favicon  -->
     <link rel="icon" href="images/logo_circle.png">
     <script src="https://kit.fontawesome.com/6f246cdb03.js" crossorigin="anonymous"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/handlebars.js/2.0.0-alpha.1/handlebars.min.js"></script>
     <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
-    <script src="js/personalgame.js"></script>
 
-</head>
+  </head>
 
-  <body data-spy="scroll" data-target=".fixed-top">
-    <div id="WaitingRoom" class="basic-2">
-      <div>
+  <body>
+    <div id="details" class="basic-2">
+      <div id = "WaitingRoom">
         <div class="container">
             <div class="row">
-                
+                <div class="col-lg-6">
                   <div class="text-container">
-                    <h1 style="font-size: 4rem; line-height: 1.5;">Welcome to the game page!</h1>
-                    <h3 style="margin-bottom: 3rem;">Please wait while we find you a partner...</h3> 
-                    <div class="loader"></div>
+                    <h6>Welcome to the game page!</h6>
+                    <h3>Please wait while we find you a partner...</h3>
                   </div>
+                </div>
             </div>
         </div>
       </div>                  
     </div>
-
-   
-    
-
-    <header id="GameScreen" class="header-game">
-      <div id="User" value = 1>
+    <div id = "GameScreen">
+      <div id = "User" value = 1>
         <button class="btn btn-default" id="userid" value = 1>{userid}</button>
       </div>
-      <div class="container">
-          <div class="row">
-            <div class="col-lg-12">
-              <div class="image-container">
-                  <img class="img-fluid" id = "image" src="{image_url}" alt="alternative">
-              </div> <!-- end of image-container -->
-            </div> <!-- end of col -->
-            <div class="col-lg-8">
-              <div id="song" class="text-container">
-                <h3>Please click on the word that describes best the song: </h3><h7 id = "name">"{name}" </h7> <h7> By </h7> <h7 id = "artist">{artist}</h7>
-              </div>  <!-- end of text-container -->
-            </div> <!-- end of div -->
-          </div> <!-- end of row -->
-      </div> <!-- end of container -->
-      <div class="container">
-        <div class="row">
-          <div class="col-lg-12">
-            <div class="image-container">
-            </div> <!-- end of image-container -->
-          </div> <!-- end of col -->
-          <div class="col-lg-8">
-            <div id="song" class="text-container" style="margin-top: 1rem">
-              <button class="btn-solid-reg page-scroll" id="option1" value = 1>{option1}</button>
-              <button class="btn-solid-reg page-scroll" id = "option2" value = 1>{option2}</button>
-            </div>  <!-- end of text-container -->
-          </div> <!-- end of div -->
-        </div> <!-- end of row -->
+      <div id = "song">
+          <dt>Song: </dt><dd class="text-overflow" id = "name">{name}</dd>
       </div>
-  </header> <!-- end of header -->
-  <!-- end of header -->
-      
-
+      <button class="btn btn-default" id="option1" value = 1>{option1}</button>
+      <br>
+      <button class="btn btn-default" id = "option2" value = 1>{option2}</button>
+    </div>
     <div id = "End">
       Oh No! This is the end of the game. everything good comes to an end...
       <dt>You: </dt><dd class="text-overflow" id = "state">{state}</dd>
     </div>
     <script>
-      document.getElementById("WaitingRoom").style.display = "block";
-      document.getElementById("GameScreen").style.display = "none";
-      document.getElementById("End").style.display = "none";
+    document.getElementById("WaitingRoom").style.display = "block";
+    document.getElementById("GameScreen").style.display = "none";
+    document.getElementById("End").style.display = "none";
     </script>
 
     <script  type="text/javascript" src="/socket.io/socket.io.js"></script>
@@ -190,10 +162,8 @@
         
         songname = song_data["songname"];
         popularity = song_data["popularity"];
-        document.getElementById("image").src = song_data["image_url"];
-        
-        Title.innerHTML = songname ;
-        document.getElementById("artist").innerHTML = song_data["artist"];
+          
+        Title.innerHTML = songname;
 
         
 
@@ -308,7 +278,6 @@
             false);
           songname = song_data["songname"];
           popularity = song_data["popularity"];
-          document.getElementById("image").src = song_data["image_url"];
           
           let offers = call_ajax('\\get_offers',
             {songID: tracks[i], name: songname, views: popularity},
@@ -328,8 +297,7 @@
             words = offers.words;     
           }
           
-          Title.innerHTML = songname ;
-          document.getElementById("artist").innerHTML = song_data["artist"];
+          Title.innerHTML = songname;
           option1.innerHTML = words[0]; 
           option2.innerHTML = words[1];
 
