@@ -317,19 +317,30 @@ try
       });
       socket.on("disconnect", function(data)
       {
-        var other_player = currently_playing[socket.id];
-        var room = io.sockets.adapter.sids[other_player][1];
-        socket.to(room).emit("Exit",{}); /*other player has logged out before endgame*/
         if(participents.length == 1) 
         {
           participents.pop();
         }
+        var other_player = currently_playing[socket.id];
+        console.log(other_player);
+        // console.log(socket.id);
+        var roomdata = io.sockets.adapter.sids.get(other_player)
+        if(roomdata != undefined)
+        {
+          delete currently_playing[other_player];
+          delete currently_playing[socket.id];
+          console.log(currently_playing);
+          var room = Array.from(io.sockets.adapter.sids.get(other_player)).filter(item => item != other_player)[0];
+        }
+        socket.to(room).emit("Exit",{}); /*other player has logged out before endgame*/
       });
       socket.on("EndGame",function(data) 
       {
         let game = data.game_id;
         let winner = 0;
-        games_arr[data.game_id-1].answers[data.user -1] = data.score;
+        console.log("\n This is the endgame \n");
+        console.log(data.score);
+        games_arr[data.game_id-1].answers[data.user -1] = data.score + 1;
         if(games_arr[data.game_id-1].answers[0] >= 1 && games_arr[data.game_id-1].answers[1] >= 1)
         {
           winner = 0;
@@ -341,6 +352,7 @@ try
           {
             winner = 2;
           }
+          console.log("\n Goodbye now \n");
           io.to(data.game_id).emit("Exit", {user_1_score: games_arr[data.game_id-1].answers[0] , user_2_score: games_arr[data.game_id-1].answers[1], winner:winner});
         }
       })
@@ -359,7 +371,7 @@ try
         user_2 = participents.pop();
         user_1 = participents.pop();
         currently_playing[user_1.socketID] = user_2.socketID;
-        currently_playing[user_2.socketID] = user_1.socjetID; 
+        currently_playing[user_2.socketID] = user_1.socketID; 
         io.to(games_num).emit('InitGame', {user_1_id: user_1['user_id'], user_2_id: user_2['user_id'],
         user_1_name: user_1['username'], user_2_name: user_2['username'],
         tracks: popular_songs, game_id: games_num});  

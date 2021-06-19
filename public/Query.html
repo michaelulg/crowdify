@@ -441,6 +441,8 @@
           var offers = call_ajax('\\get_offers',
             { songID: songID, name: name, views: popularity },
             false);
+          $('#login').hide();
+          $('#loggedin').show();
           document.getElementById('pick-new-song').addEventListener('click', function () {
 
             pos = Math.floor((Math.random() * 10 + 1));
@@ -459,7 +461,7 @@
               false);
 
             words = offers.words;
-
+            alert(words);
             var len = words.lenght;
             var options;
             if (len == 0) {
@@ -483,7 +485,8 @@
 
             optionsPlaceholder.innerHTML = optionsTemplate(options); /*render options*/
           }, false);
-
+          $('#login').hide();
+          $('#loggedin').show();
           document.getElementById('submit-data').addEventListener('click', function (req, res) {
             let word = document.getElementById("song-data").value;
             call_ajax('\\word',
