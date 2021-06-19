@@ -1,4 +1,5 @@
 /**
+ * Try: comment
  * This is the node js server
  * This is the primal part of the project
  * Here we define 2 apps, one for the game (on port 3000) and the other for the rest of the website (port 8888)
