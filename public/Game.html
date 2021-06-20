@@ -55,7 +55,7 @@
       <div class="container">
         <div class="row" style="height: 200px;"> 
           <div class="col-lg-12" style="height: 200px; width: 570px; margin-top: 0px; flex: auto;">
-            <h3 style="text-align: left;">Round: </h3><h3 id ="round" style="text-align: left;"> {round}</h3> 
+            <h3 style="text-align: left;">Round: </h3><h3 id ="round" style="text-align: left;"> {round} </h3> 
           </div>
           <div class="col-lg-12" style="height: 200px; width: 570px; margin-top: 0px; text-align: right;">
             <h3 style="text-align: right;">You are Playing Against: </h3> <h3 id ="opponent" style="text-align: right;"> {user_name}</h3>
@@ -185,8 +185,8 @@
       socket.on('InitGame', function(data)
       {
         
-        document.getElementById("WaitingRoom").style.display = "block";
-        document.getElementById("GameScreen").style.display = "none";
+        document.getElementById("WaitingRoom").style.display = "none";
+        document.getElementById("GameScreen").style.display = "block";
         document.getElementById("End").style.display = "none";
         
         user_1_id = data.user_1_id;
@@ -194,7 +194,7 @@
         user_1_name = data.user_1_name;
         user_2_name = data.user_2_name;
         
-        round_element.innerHTML = 1;
+        round_element.innerHTML = String(1) + "/4";
         if(User.value == 1)
         {
           document.getElementById("opponent").innerHTML = user_2_name;
@@ -334,7 +334,7 @@
         {
           i += 1;
           round += 1;
-          round_element.innerHTML = round + 1;
+          round_element.innerHTML = String(round + 1) + "/4" ;
           
           song_data = call_ajax('\\get_track_name',
           {songID:tracks[i],access_token: access_token},
