@@ -50,9 +50,11 @@
 
     <header id="GameScreen" class="header-game">
       <div id="User" value = 1>
-        <button class="btn btn-default" id="userid" value = 1>{userid}</button>
+        <button class="btn btn-default" id="userid" value = 1></button>
       </div>
       <div class="container">
+        <h7>You are Playing Against: </h7> <h7 id ="opponent"> {user_name}</h7>
+        <h7>Round: </h7> <h7 id ="round"> {round}</h7>
           <div class="row">
             <div class="col-lg-12">
               <div class="image-container">
@@ -103,7 +105,7 @@
       $.ajax({
           url: url,
           data: data,
-          async: async,
+          async: false,
           success: function(response) {
             res = response;
           }
@@ -124,9 +126,10 @@
     var params = getHashParams();
     var access_token = params.access_token,
         refresh_token = params.refresh_token;
-    if(access_token == undefined)
+        error = params.error;
+    if(access_token == undefined || error)
     {
-      alert("invalid access token");
+      call_ajax('\\login', {}, false);
     }  
     
     else
@@ -146,8 +149,10 @@
       var option2 =  document.getElementById("option2");
       var Title =  document.getElementById("name");
       var User = document.getElementById("User");
+      var round_element = document.getElementById("round");
       
       let i = 0;
+      let round = 0;
       let game_id = 0;
       
       const socket = io(window.location.origin, {transports: ['websocket']});
@@ -157,7 +162,6 @@
       {
         
         if(lock_user_id == 0){
-          document.getElementById("userid").innerHTML = socket.id;
           User.value = data; 
           lock_user_id = 1;
         }
@@ -176,11 +180,21 @@
         user_1_name = data.user_1_name;
         user_2_name = data.user_2_name;
         
+        round_element.innerHTML = 1;
+        if(User.value == 1)
+        {
+          document.getElementById("opponent").innerHTML = user_2_name;
+        }
+
+        if(User.value == 2)
+        {
+          document.getElementById("opponent").innerHTML = user_1_name;
+        }
         
         lock_answered = 0; /*we dont allow more than one click*/
         tracks = data.tracks;
         game_id = data.game_id;
-        document.getElementById("userid").innerHTML = data.game_id;
+        
         let songname;
         let popularity;
         
@@ -194,7 +208,6 @@
         
         Title.innerHTML = songname ;
         document.getElementById("artist").innerHTML = song_data["artist"];
-
         
 
         let words;
@@ -300,36 +313,46 @@
         let songname;
         let popularity;
         let words = [];
-        if(i < 5)
+        let song_data;
+        let offers;
+        let image = document.getElementById("image");
+        if(round < 3)
         {
           i += 1;
-          let song_data = call_ajax('\\get_track_name',
-            {songID:tracks[i],access_token: access_token},
-            false);
+          round += 1;
+          round_element.innerHTML = round + 1;
+          
+          song_data = call_ajax('\\get_track_name',
+          {songID:tracks[i],access_token: access_token},
+          false);
+          
           songname = song_data["songname"];
           popularity = song_data["popularity"];
-          document.getElementById("image").src = song_data["image_url"];
           
-          let offers = call_ajax('\\get_offers',
+          
+          offers = call_ajax('\\get_offers',
             {songID: tracks[i], name: songname, views: popularity},
             false);
+          
           while(words.length < 2)
           {
             i += 1;
-            let song_data = call_ajax('\\get_track_name',
+            
+            song_data = call_ajax('\\get_track_name',
             {songID:tracks[i],access_token: access_token},
             false);
+            
             songname = song_data["songname"];
             popularity = song_data["popularity"];
-          
-            let offers = call_ajax('\\get_offers',
+            
+            offers = call_ajax('\\get_offers',
             {songID: tracks[i], name: songname, views: popularity},
             false);
             words = offers.words;     
           }
-          
           Title.innerHTML = songname ;
           document.getElementById("artist").innerHTML = song_data["artist"];
+          image.src = song_data["image_url"];
           option1.innerHTML = words[0]; 
           option2.innerHTML = words[1];
 
