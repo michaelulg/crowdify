@@ -20,7 +20,7 @@
  var client_secret = '9ba69741607c4d709bac93513ebbdd99'; // secret id
  var redirect_uri = 'http://localhost:8888/callback'; //redirect uri, The uri that login re-directs to
  
- var driver = neo4j.driver("bolt://localhost:7687", neo4j.auth.basic("neo4j", "12345"));
+ var driver = neo4j.driver("bolt://localhost:11003", neo4j.auth.basic("neo4j", "12345"));
  var session1 = driver.session();
  var session2 = driver.session();
   
@@ -67,6 +67,12 @@
  app1.use('/search', express.static(__dirname + '/public/search.html'))
    .use(cors())
    .use(cookieParser());
+ app1.use('/Contact', express.static(__dirname + '/public/Contact.html'))
+ .use(cors())
+ .use(cookieParser());
+ app1.use('/About', express.static(__dirname + '/public/About.html'))
+ .use(cors())
+ .use(cookieParser());
  /* *********************************************************************************************************** */
  
  /* ********************************** Game Page ********************************* */
@@ -223,6 +229,7 @@
    var songname;
    var popularity;
    var image_url;
+   var artist;
    console.log("Here");
    try
    {
@@ -248,7 +255,8 @@
      request.get(options, function(error, response, body) {
        //console.log('https://api.spotify.com/v1/tracks/'+songID);
        image_url = body.album.images[1].url;
-       res.send({image_url:image_url, songname: songname, songID: songID, popularity: popularity})
+       artist = body.album.artists[0].name;
+       res.send({image_url:image_url, songname: songname, songID: songID, popularity: popularity, artist:artist})
      });
    });
  }
