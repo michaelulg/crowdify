@@ -85,7 +85,9 @@ function makeColumns(cellNum) {
             
             pos = Math.floor((Math.random()*urls.length));
 
+
             newCell.setAttribute("href","/Game?access_token="+access_token+"&refresh_token="+refresh_token);
+
             newCell.style.cursor = "default";
             
             newCell.setAttribute("style", 
@@ -131,9 +133,9 @@ async function generateSongList() {
     var elem = document.getElementById("search-head");
 
     let song_ids = ["7mEDVrAHDnQJStDo8jKJJm", "7mEDVrAHDnQJStDo8jKJJm", "1ISMa0THMDKFBq2UMfm02e", "63Wv3KNxCfnuUIW988TyIl", "2iRniYXjMHKmwXqA2jYXP7", "2iRniYXjMHKmwXqA2jYXP7"];
-    let string = decodeURI(location.search.substring(1)).split('&')[0];
-    /*$.ajax({
-        url: '\search',
+    let string = decodeURI(location.search.substring(1)).split('#')[0];
+    $.ajax({
+        url: '\get_search',
         data: {
             string : string
         },
@@ -142,7 +144,7 @@ async function generateSongList() {
         }
     })
 
-    let songs = song_ids; */
+    //let songs = song_ids; 
     let songs = song_ids;
 
     let songname;
