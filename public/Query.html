@@ -32,48 +32,57 @@
 
   <!-- Navigation -->
   <nav class="navbar navbar-expand-lg fixed-top navbar-dark">
-    <div class="container">
+        <div class="container">
+            
+            <!-- Text Logo - Use this if you don't have a graphic logo -->
+            <!-- <a class="navbar-brand logo-text page-scroll" href="index.html">Leon</a> -->
 
-      <!-- Text Logo - Use this if you don't have a graphic logo -->
-      <!-- <a class="navbar-brand logo-text page-scroll" href="index.html">Leon</a> -->
+            <!-- Image Logo -->
+            <a class="navbar-brand logo-image" href="index.html"><img src="images/logo_circle.png" alt="alternative"></a> 
 
-      <!-- Image Logo -->
-      <a class="navbar-brand logo-image" href="index.html"><img src="images/logo_circle.png" alt="alternative"></a>
+            <button class="navbar-toggler p-0 border-0" type="button" data-toggle="offcanvas">
+                <span class="navbar-toggler-icon"></span>
+            </button>
 
-      <button class="navbar-toggler p-0 border-0" type="button" data-toggle="offcanvas">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-
-      <div class="navbar-collapse offcanvas-collapse" id="navbarsExampleDefault">
-        <ul class="navbar-nav ml-auto">
-          <li class="nav-item">
-            <a class="nav-link page-scroll" href="article.html">Article <span class="sr-only">(current)</span></a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link page-scroll" href="features.html">Features</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link page-scroll" href="pricing.html">Pricing</a>
-          </li>
-          <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="#" id="dropdown01" data-toggle="dropdown" aria-haspopup="true"
-              aria-expanded="false">Drop</a>
-            <div class="dropdown-menu" aria-labelledby="dropdown01">
-              <a class="dropdown-item page-scroll" href="terms.html">Terms Conditions</a>
-              <div class="dropdown-divider"></div>
-              <a class="dropdown-item page-scroll" href="privacy.html">Privacy Policy</a>
-            </div>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link page-scroll" href="contact.html">Contact</a>
-          </li>
-        </ul>
-        <span class="nav-item">
-          <a class="btn-outline-sm page-scroll" href="#download">Download</a>
-        </span>
-      </div> <!-- end of navbar-collapse -->
-    </div> <!-- end of container -->
-  </nav> <!-- end of navbar -->
+            <div class="navbar-collapse offcanvas-collapse" id="navbarsExampleDefault">
+                <ul class="navbar-nav ml-auto">
+                    <li class="nav-item">
+                        <a class="nav-link page-scroll" href="/About">About<span class="sr-only">(current)</span></a>
+                    </li>
+                    <li class="nav-item">
+                        <a id="Query" class="nav-link page-scroll">Query</a>
+                    </li>
+                    <li class="nav-item">
+                        <a id="Game" class="nav-link page-scroll">Game</a>
+                    </li>
+                    <script>
+                        function getHashParams() {
+                            var hashParams = {};
+                            var e, r = /([^&;=]+)=?([^&;]*)/g,
+                                q = window.location.hash.substring(1);
+                            while ( e = r.exec(q)) {
+                            hashParams[e[1]] = decodeURIComponent(e[2]);
+                            }
+                            return hashParams;
+                        }
+                        var params = getHashParams();
+                        var access_token = params.access_token;
+                        var refresh_token = params.refresh_token;
+                        var game = document.getElementById("Game");
+                        game.setAttribute("onclick","location.href='/Game?access_token="+access_token+"&refresh_token="+refresh_token+"';");
+                        var query = document.getElementById("Query");
+                        query.setAttribute("onclick","location.href='/Query#access_token="+access_token+"&refresh_token="+refresh_token+"';");
+                    </script>
+                    <li class="nav-item">
+                        <a class="nav-link page-scroll" href="/Contact">Contact</a>
+                    </li>
+                </ul>
+                <span class="nav-item">
+                    <a class="btn-outline-sm page-scroll" href="/">Home</a>
+                </span>
+            </div> <!-- end of navbar-collapse -->
+        </div> <!-- end of container -->
+    </nav> <!-- end of navbar -->
   <!-- end of navigation -->
 
   <div id="login">
@@ -270,7 +279,7 @@
         </div> <!-- end of col -->
         <div class="col-lg-8">
             <div class="text-container">
-                <h3>Please enter a signficant word to describe the song: </h3><h7>{{songname}}</h7>
+                <h3>Please enter a signficant word to describe the song: </h3><h7>"{{songname}}"</h7><br><h7>By</h7><br><h7>{{artist}}</h7>
                 
                 <!--<a class="btn-solid-reg page-scroll" href="#download">Download</a>-->
             </div> <!-- end of text-container -->
@@ -336,10 +345,7 @@
     <script src="js/scripts.js"></script> <!-- Custom scripts -->
     <script src="//cdnjs.cloudflare.com/ajax/libs/handlebars.js/2.0.0-alpha.1/handlebars.min.js"></script>
     <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
-<<<<<<< HEAD
-=======
     <script src="js/personalgame.js"></script>
->>>>>>> 7896bd133ffb36986f07be5775f901b5759d6d49
 
     <script>
 
@@ -350,6 +356,7 @@
       var popularity;
       var username;
       var name; /*song name*/
+      var artist;
 
       var userProfileSource = document.getElementById('user-profile-template').innerHTML,
         userProfileTemplate = Handlebars.compile(userProfileSource),
@@ -475,6 +482,7 @@
           songID = song_data.songID;
           popularity = song_data.popularity;
           name = song_data.songname;
+          artist = song_data.artist;
           let words;
           
           /* ************************************************************************************************* */
@@ -482,7 +490,7 @@
           /* ******************************** Get Offers for the Current Song ******************************** */
           
           var offers = call_ajax('\\get_offers',
-            { songID: songID, name: name, views: popularity },
+            { songID: songID, name: name, views: popularity, artist: artist },
             false);
           
           words = offers.words;
@@ -515,7 +523,7 @@
             let words;
 
             var offers = call_ajax('\\get_offers',
-              { songID: songID, name: name, views: popularity },
+              { songID: songID, name: name, views: popularity, artist: artist },
               false);
               words = offers.words;
               render_offers(words, song_data.image_url);
