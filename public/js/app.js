@@ -7,6 +7,15 @@ var urls;
 //Creates a default grid sized 16x16 
 function defaultGrid() {
     const container = document.getElementById("container");
+
+    var params = getHashParams();
+    var access_token = params.access_token;
+    var refresh_token = params.refresh_token;
+    var game = document.getElementById("Game");
+    game.setAttribute("onclick","location.href='/Game?access_token="+access_token+"&refresh_token="+refresh_token+"';");
+    var query = document.getElementById("Query");
+    query.setAttribute("onclick","location.href='/Query#access_token="+access_token+"&refresh_token="+refresh_token+"';");
+
     makeRows(10);
     makeColumns(10);
     container.addEventListener("mouseover", function( event ) {
@@ -16,22 +25,15 @@ function defaultGrid() {
         var refresh_token = params.refresh_token;
 
         event.target.style.backgroundColor = "black";
-        let square1 = document.createElement("a");
-        square1.innerHTML = "<a id='game'>Game</a>"
-        square1.href = "Game#access_token="+access_token+"&refresh_token="+refresh_token;
 
-        event.target.appendChild(square1).className = "square";
+        
         
         let square2 = document.createElement("a");
         square2.innerHTML = "<a id='query'>Query</a>"
-        square2.href= "/Query#access_token="+access_token+ "&refresh_token="+refresh_token;
+        //square2.href= "/Query#access_token="+access_token+ "&refresh_token="+refresh_token;
 
         event.target.appendChild(square2).className = "square";
       
-        // reset the color after a short delay
-        //setTimeout(function() {
-        //  event.target.style.backgroundColor = "#" + Math.floor(Math.random()*16777215).toString(16);;
-        //}, 500);
       }, false);
     container.addEventListener("mouseout", function( event ) {
         pos = Math.floor((Math.random()*urls.length));
@@ -81,13 +83,11 @@ function makeColumns(cellNum) {
             var access_token = params.access_token;
             var refresh_token = params.refresh_token;
             let newCell = document.createElement("a");
-            //newCell.setAttribute("href", "/Query#access_token="+access_token+ "&refresh_token="+refresh_token);
+            newCell.setAttribute("href", "/Query#access_token="+access_token+ "&refresh_token="+refresh_token);
             
             pos = Math.floor((Math.random()*urls.length));
 
-
-            newCell.setAttribute("href","/Game?access_token="+access_token+"&refresh_token="+refresh_token);
-
+            //newCell.setAttribute("href","/Game?access_token="+access_token+"&refresh_token="+refresh_token);
             newCell.style.cursor = "default";
             
             newCell.setAttribute("style", 
@@ -133,9 +133,9 @@ async function generateSongList() {
     var elem = document.getElementById("search-head");
 
     let song_ids = ["7mEDVrAHDnQJStDo8jKJJm", "7mEDVrAHDnQJStDo8jKJJm", "1ISMa0THMDKFBq2UMfm02e", "63Wv3KNxCfnuUIW988TyIl", "2iRniYXjMHKmwXqA2jYXP7", "2iRniYXjMHKmwXqA2jYXP7"];
-    let string = decodeURI(location.search.substring(1)).split('#')[0];
-    $.ajax({
-        url: '\get_search',
+    let string = decodeURI(location.search.substring(1)).split('&')[0];
+    /*$.ajax({
+        url: '\search',
         data: {
             string : string
         },
@@ -144,7 +144,7 @@ async function generateSongList() {
         }
     })
 
-    //let songs = song_ids; 
+    let songs = song_ids; */
     let songs = song_ids;
 
     let songname;
