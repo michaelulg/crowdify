@@ -126,6 +126,30 @@
      res.redirect('/login');
    }
  }); 
+
+ app2.get('/login', function(req, res) { 
+  
+  var state = generateRandomString(16);
+  res.cookie(stateKey, state);
+ 
+  // application requests authorization, with scope as permissions
+  var scope = 'user-read-private user-read-email user-library-read user-read-recently-played user-read-currently-playing';
+  try
+  {  res.redirect('https://accounts.spotify.com/authorize?' +
+      querystring.stringify({
+      response_type: 'code', 
+      client_id: client_id,
+      scope: scope,
+      redirect_uri: redirect_uri,
+      state: state
+    }));
+  }
+  catch(err)
+  {
+    res.redirect('/login');
+  }
+}); 
+
  
  
  app1.get('/callback', function(req, res) {
@@ -184,6 +208,63 @@
      
    }
  });
+
+ app2.get('/callback', function(req, res) {
+  
+  // application requests refresh and access tokens
+  // after checking the state parameter
+ 
+  var code = req.query.code || null;
+  var state = req.query.state || null;
+  var storedState = req.cookies ? req.cookies[stateKey] : null;
+   
+  if (state === null || state !== storedState) {
+    res.redirect('/#' +
+      querystring.stringify({
+        error: 'state_mismatch'
+      }));
+  } else {
+    res.clearCookie(stateKey);
+    var authOptions = {
+      url: 'https://accounts.spotify.com/api/token',
+      form: {
+        code: code,
+        redirect_uri: redirect_uri,
+        grant_type: 'authorization_code'
+      },
+      headers: {
+        'Authorization': 'Basic ' + (new Buffer(client_id + ':' + client_secret).toString('base64'))
+      },
+      json: true
+    };
+    
+    request.post(authOptions, function(error, response, body) {
+      if (!error && response.statusCode === 200) {
+        
+        var access_token = body.access_token,
+        refresh_token = body.refresh_token;
+
+        // passing the tokens to browser
+        res.redirect('/boxes#' +
+          querystring.stringify({
+            access_token: access_token,
+            refresh_token: refresh_token
+          }));
+      } else {
+        res.redirect('/#' +
+          querystring.stringify({
+            error: 'invalid_token'
+          }));
+      }
+    });
+    
+    funcs.popular_songs().then(function(result) /*initiate popular songs*/
+    {
+      popular_songs = result;
+    })
+    
+  }
+});
  
  /** 
  * @param curr_access_token The access token
@@ -230,7 +311,7 @@
    var popularity;
    var image_url;
    var artist;
-   console.log("Here");
+   //console.log("Here");
    try
    {
      var options = {
@@ -241,10 +322,10 @@
  
      // use the access token to access the Spotify Web API
      request.get(options, function(error, response, body) {
-     //console.log("body:")
-     //console.log(body.items[0]);
+     ////console.log("body:")
+     ////console.log(body.items[0]);
      songID = body.items[pos].track.id;
-     /*console.log(songID);*/
+     /*//console.log(songID);*/
      songname = body.items[pos].track.name;
      popularity = body.items[pos].track.popularity;
      options = {
@@ -253,7 +334,7 @@
        json: true
      };
      request.get(options, function(error, response, body) {
-       //console.log('https://api.spotify.com/v1/tracks/'+songID);
+       ////console.log('https://api.spotify.com/v1/tracks/'+songID);
        image_url = body.album.images[1].url;
        artist = body.album.artists[0].name;
        res.send({image_url:image_url, songname: songname, songID: songID, popularity: popularity, artist:artist})
@@ -331,7 +412,7 @@
          games_arr[data.game_id-1].answers[0] = 0;
          games_arr[data.game_id-1].answers[1] = 0;
          io.to(data.game_id).emit("NextRound");
-         console.log("Thnaks God");
+         //console.log("Thnaks God");
          }
        });
        socket.on("disconnect", function(data)
@@ -341,13 +422,13 @@
            participents.pop();
          }
          var other_player = currently_playing[socket.id];
-         // console.log(socket.id);
+         // //console.log(socket.id);
          var roomdata = io.sockets.adapter.sids.get(other_player)
          if(roomdata != undefined)
          {
            delete currently_playing[other_player];
            delete currently_playing[socket.id];
-           //console.log(currently_playing);
+           ////console.log(currently_playing);
            var room = Array.from(io.sockets.adapter.sids.get(other_player)).filter(item => item != other_player)[0];
          }
          
@@ -360,8 +441,8 @@
        {
          let game = data.game_id;
          let winner = 0;
-         console.log("\n This is the endgame \n");
-         console.log(data.score);
+         //console.log("\n This is the endgame \n");
+         //console.log(data.score);
          games_arr[data.game_id-1].answers[data.user -1] = data.score + 1;
          if(games_arr[data.game_id-1].answers[0] >= 1 && games_arr[data.game_id-1].answers[1] >= 1)
          {
@@ -374,7 +455,7 @@
            {
              winner = 2;
            }
-           console.log("\n Goodbye now \n");
+           //console.log("\n Goodbye now \n");
            game_over = 1;
            io.to(data.game_id).emit("Exit", {user_1_score: games_arr[data.game_id-1].answers[0] , user_2_score: games_arr[data.game_id-1].answers[1], winner:winner});
          }
@@ -402,7 +483,7 @@
  
      }
    });
-   //console.log(curr_access_token);
+   ////console.log(curr_access_token);
    res.redirect("http://localhost:3000/Gaming#access_token="+curr_access_token+"&refresh_token="+curr_refresh_token);
  });
  
@@ -444,9 +525,9 @@
  {
  
    var curr_access_token = req.query.access_token;
-   console.log("IN GET_TRACK_NAME");
-   //console.log(curr_access_token);
-   //console.log(req.query.songID);
+   //console.log("IN GET_TRACK_NAME");
+   ////console.log(curr_access_token);
+   ////console.log(req.query.songID);
    var songID = req.query.songID;
    var songname;
    var popularity;
@@ -461,13 +542,13 @@
        json: true
      };
      request.get(options, function(error, response, body) {
-       //console.log(body);
-       // console.log('https://api.spotify.com/v1/tracks/'+songID);
+       ////console.log(body);
+       // //console.log('https://api.spotify.com/v1/tracks/'+songID);
        console.log(body);
-       image_url = body.album.images[1].url;
        songname = body.name; 
        popularity = body.popularity; 
        artist = body.album.artists[0].name;
+       image_url = body.album.images[1].url;
        song_url = body.uri;
        res.send({"image_url":image_url, "songname": songname, "popularity": popularity, "artist": artist, "song_url": song_url})
      });
@@ -481,7 +562,7 @@
  app1.get("/get_track_name",function(req,res)
  {
    var curr_access_token = req.query.access_token;
-   //console.log(curr_access_token);
+   console.log(curr_access_token);
    var songID = req.query.songID;
    var songname;
    var popularity;
@@ -496,14 +577,14 @@
        json: true
      };
      request.get(options, function(error, response, body) {
-       // console.log('https://api.spotify.com/v1/tracks/'+songID);
+       //console.log('https://api.spotify.com/v1/tracks/'+songID);
        //console.log(body);
        image_url = body.album.images[1].url;
        songname = body.name; 
        popularity = body.popularity; 
        artist = body.album.artists[0].name;
        song_url = body.uri;
-       res.send({"image_url":image_url, "songname": songname, "popularity": popularity, "artist": artist, "song_url": song_url})
+       res.send({"image_url":image_url, "songname": songname, "popularity": popularity, "artist": artist, "song_url": song_url});
      });
    }
    catch(err)
@@ -533,13 +614,13 @@
  /*function: get_offers*/
  app2.get("/get_offers", function(req,res)
  {
-   console.log('inside get_offers');
+   //console.log('inside get_offers');
    let songID = req.query.songID;
    let name = req.query.name;
    let views = req.query.views;
-   console.log("\n\n\n"+name+"\n\n\n");
+   //console.log("\n\n\n"+name+"\n\n\n");
    
-   console.log("\n\n\n"+views+"\n\n\n");
+   //console.log("\n\n\n"+views+"\n\n\n");
    funcs.get_offers(songID,name,views).then(function(result)
    {
      res.send(
@@ -551,9 +632,10 @@
  });
  
  /*function: search*/
- app1.get("/search", function(req,res)
+ app1.get("/get_search", function(req,res)
  {
    let string = req.query.string;
+   console.log(string);
    funcs.search(string).then(function(result)
    {
      res.send(
@@ -567,7 +649,7 @@
  /*function: get_superusers*/
  app1.get("/get_superusers", function(req,res)
  {
- console.log('inside get_superusers in app2');
+ //console.log('inside get_superusers in app2');
    funcs.get_superusers().then(function(result)
    {
      res.send(
@@ -588,16 +670,16 @@
    let name = req.query.name;
    let views = req.query.views;
    let word = req.query.word;
-   console.log("stuck");
+   //console.log("stuck");
    funcs.add_word(userID, username, songID, name, views, word);
-   console.log("realese");
+   //console.log("realese");
    res.send({});
  })
  
  /*function: add_word*/
  app2.get("/word",function(req,res)
  {
-   console.log("\n UserID:" + req.query.userID + "\n");
+   //console.log("\n UserID:" + req.query.userID + "\n");
    let userID = req.query.userID;
    let songID = req.query.songID;
    let username = req.query.username;
@@ -611,9 +693,9 @@
  /*functionL get_weigth*/
  app2.get("/get_weight", function(req,res)
  {
-   console.log("\ninside get_wieght\n");
+   //console.log("\ninside get_wieght\n");
    let word = req.query.word;
-   console.log("\n\n\n"+word+"\n\n\n");
+   //console.log("\n\n\n"+word+"\n\n\n");
    let songID = req.query.songID;
    funcs.get_weight(songID,word).then(function(result)
     {
@@ -627,10 +709,10 @@
  
  /*************************************************************************************************************** */
  
- console.log('Listening on 8888');
+ //console.log('Listening on 8888');
  app1.listen(8888);
  
  server.listen(3000, () => {
- console.log('listening on *:3000');
+ //console.log('listening on *:3000');
  });
  
