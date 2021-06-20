@@ -132,39 +132,39 @@ function getSearchTerm() {
 async function generateSongList() {
     var elem = document.getElementById("search-head");
 
-    let song_ids = ["7mEDVrAHDnQJStDo8jKJJm", "7mEDVrAHDnQJStDo8jKJJm", "1ISMa0THMDKFBq2UMfm02e", "63Wv3KNxCfnuUIW988TyIl", "2iRniYXjMHKmwXqA2jYXP7", "2iRniYXjMHKmwXqA2jYXP7"];
-    let string = decodeURI(location.search.substring(1)).split('&')[0];
-    /*$.ajax({
-        url: '\search',
+    //let song_ids = ["7mEDVrAHDnQJStDo8jKJJm", "7mEDVrAHDnQJStDo8jKJJm", "1ISMa0THMDKFBq2UMfm02e", "63Wv3KNxCfnuUIW988TyIl", "2iRniYXjMHKmwXqA2jYXP7", "2iRniYXjMHKmwXqA2jYXP7"];
+    let string = decodeURI(location.search.substring(1)).split('#')[0];
+    let song_ids;
+    $.ajax({
+        url: '\get_search',
         data: {
             string : string
         },
+        async: false,
         success: function(response) {
+            
             song_ids = response.songs;
         }
     })
-
-    let songs = song_ids; */
-    let songs = song_ids;
+ 
+    let songs = [];
 
     let songname;
     let image_url;
     let artist;
     let song_url;
     
-
-    for (let i = 0; i < songs.length; i++) {
+    for (let i = 0; i < song_ids.length; i++) {
         let songID = song_ids[i];
         var params = getHashParams();
         var access_token = params.access_token;
-
+        
         $.ajax({
             url: '\get_track_name',
             data: {
                 songID : songID,
                 access_token : access_token
             }, 
-
             async: false,
             success: function(response) {
                 songname = response.songname;
@@ -173,7 +173,9 @@ async function generateSongList() {
                 song_url = response.song_url;
             }
         });
+        
         songs[i] = {songname : songname, artist : artist, image_url : image_url, song_url : song_url};
+        
         var elem = document.getElementById("search-results");
         elem.insertAdjacentHTML('afterbegin', '<li class="media"> <div id="search-img' + i + '" class="col-lg-14"> </div> <div class="media-body"> <h3 class="list-item-title">' + songname + '</h3> <p class="list-item-text"> By ' + artist + '</p> </div> <a class="btn-solid-reg page-scroll" href=' + song_url + '>Play song</button> </li>'); 
         let img = document.getElementById("search-img" + i);
