@@ -44,13 +44,17 @@
   }
 
 .square{
-    background: #1DB954;
+    background-color: #1fc4ca;
     text-align: center;
     pointer-events: none;
-    border: 1px solid black;
-    min-width: 65px;
+    border: 1px solid #1fc4ca;
+    color: #ffffff;
+    font-weight: 600;
+    font-size: 1.5rem;
+    padding: 2.7rem 1.5rem 1.5rem 1.5rem;
+    min-width: 130px;
     min-height: 130px;
-    margin: 7px 2px 2px 3.5px;
+    margin: 7.5px 2px 2px 7px;
     display: inline-block;
     border-radius: 5px;
     overflow: hidden;
@@ -60,8 +64,10 @@
                 0 4px 8px rgba(0,0,0,0.07), 
                 0 8px 16px rgba(0,0,0,0.07),
                 0 16px 32px rgba(0,0,0,0.07), 
-                0 32px 64px rgba(0,0,0,0.07);
+                0 32px 64px rgba(0,0,0,0.07);    
 }
+
+
 
 .querySquare{
   pointer-events: none;
@@ -279,11 +285,11 @@
     line-height: 88px;
   }
   nav ul li:nth-child(2):after { 
-    content: "About";
+    content: "Game";
     line-height: 88px;
   }
   nav ul li:nth-child(3):after { 
-    content: "Work";
+    content: "Query";
     line-height: 85px;
   }
   nav ul li:nth-child(4):after { 
