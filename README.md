@@ -9,3 +9,5 @@ We are a team of 4 in Tel Aviv University's Data driven Crowdsourcing workshop.
 This Website is the final product of the workshop. 
 You can check-out the codes of the website at this git page, or contact us at: contactcrowdify@gmail.com.
 Hope you enjoy it!
+
+![image](https://user-images.githubusercontent.com/63152532/122686116-3975c680-d218-11eb-9d66-3d841c360ba7.png)
