@@ -85,7 +85,9 @@ function makeColumns(cellNum) {
             
             pos = Math.floor((Math.random()*urls.length));
 
-            newCell.setAttribute("href","/Game#access_token="+access_token+"&refresh_token="+refresh_token);
+
+            newCell.setAttribute("href","/Game?access_token="+access_token+"&refresh_token="+refresh_token);
+
             newCell.style.cursor = "default";
             
             newCell.setAttribute("style", 
