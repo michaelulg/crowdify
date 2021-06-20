@@ -53,16 +53,22 @@
         <button class="btn btn-default" id="userid" value = 1></button>
       </div>
       <div class="container">
-        <h7>You are Playing Against: </h7> <h7 id ="opponent"> {user_name}</h7>
-        <h7>Round: </h7> <h7 id ="round"> {round}</h7>
-          <div class="row">
+        <div class="row" style="height: 200px;"> 
+          <div class="col-lg-12" style="height: 200px; width: 570px; margin-top: 0px; flex: auto;">
+            <h3 style="text-align: left;">Round: </h3><h3 id ="round" style="text-align: left;"> {round}</h3> 
+          </div>
+          <div class="col-lg-12" style="height: 200px; width: 570px; margin-top: 0px; text-align: right;">
+            <h3 style="text-align: right;">You are Playing Against: </h3> <h3 id ="opponent" style="text-align: right;"> {user_name}</h3>
+          </div>
+        </div>  
+        <div class="row">
             <div class="col-lg-12">
               <div class="image-container">
                   <img class="img-fluid" id = "image" src="{image_url}" alt="alternative">
               </div> <!-- end of image-container -->
             </div> <!-- end of col -->
             <div class="col-lg-8">
-              <div id="song" class="text-container">
+              <div id="song" class="text-container" style="margin-top: 2rem;">
                 <h3>Please click on the word that describes best the song: </h3><h7 id = "name">"{name}" </h7> <h7> By </h7> <h7 id = "artist">{artist}</h7>
               </div>  <!-- end of text-container -->
             </div> <!-- end of div -->
@@ -86,10 +92,18 @@
   <!-- end of header -->
       
 
-    <div id = "End">
-      Oh No! This is the end of the game. everything good comes to an end...
-      <dt>You: </dt><dd class="text-overflow" id = "state">{state}</dd>
-    </div>
+  <div id="End" class="basic-2">
+      <div class="container">
+          <div class="row">
+            <div class="text-container">
+              <h1 style="font-size: 2rem; line-height: 1.5; text-align: center;">Oh No! This is the end of the game. everything good comes to an end...</h1>
+              <h3 style="margin-bottom: 3rem; font-size: 3rem; text-align: center;">You: <span id="state" style="color: #1DB954;">{state}</span></h3> 
+            </div>
+          </div>
+      </div>                 
+  </div>
+
+    
     <script>
       document.getElementById("WaitingRoom").style.display = "block";
       document.getElementById("GameScreen").style.display = "none";
@@ -171,8 +185,8 @@
       socket.on('InitGame', function(data)
       {
         
-        document.getElementById("WaitingRoom").style.display = "none";
-        document.getElementById("GameScreen").style.display = "block";
+        document.getElementById("WaitingRoom").style.display = "block";
+        document.getElementById("GameScreen").style.display = "none";
         document.getElementById("End").style.display = "none";
         
         user_1_id = data.user_1_id;
